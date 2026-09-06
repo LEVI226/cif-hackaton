@@ -1,0 +1,259 @@
+// Prisma schema - CIF Sentinel: Plateforme de Conformité LBC/FT/FP pour IMF
+// Thématique 01 - Filtrage des clients LBC/FT/FP
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ===== CLIENT =====
+model Client {
+  id              String   @id @default(cuid())
+  code            String   @unique // Code client IMF
+  type            String   @default("PARTICULIER") // PARTICULIER, ENTREPRISE, OCCASIONNEL, HABITUEL
+  civilite        String?  // M, MME, MLLE, SOC
+  nom             String
+  prenom          String?
+  dateNaissance   String?
+  lieuNaissance   String?
+  nationalite     String?
+  paysResidence   String   @default("Burkina Faso")
+  ville           String?
+  adresse         String?
+  telephone       String?
+  email           String?
+  profession      String?
+  employeur       String?
+  revenuMensuel   Float?
+
+  // KYC
+  typePiece       String?  // CNI, PASSEPORT, PERMIS, ATTESTATION
+  numeroPiece     String?
+  dateDelivrance  String?
+  dateExpiration  String?
+  lieuDelivrance  String?
+
+  // Profil de risque
+  estPPE          Boolean  @default(false)
+  detailsPPE      String?
+  niveauRisque    String   @default("FAIBLE") // FAIBLE, MOYEN, ELEVE, PROHIBITIF
+  scoreRisque     Int      @default(0)
+  motifRisque     String?
+  sourceFonds     String?
+  origineFonds    String?
+
+  // Statut
+  statut          String   @default("ACTIF") // ACTIF, BLOQUE, SUSPENDU, INACTIF
+  motifBlocage    String?
+  dateBlocage     String?
+  occCategorie    String?  // OCCASIONNEL: categorie (VIREMENT, CHANGE, TRANSFERT)
+  estOccasionnel  Boolean  @default(false)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  comptes         Compte[]
+  transactions    Transaction[]
+  alertes         Alerte[]
+  screenings      Screening[]
+  documents       Document[]
+  kycHistorique   KycHistorique[]
+}
+
+// ===== COMPTE =====
+model Compte {
+  id           String   @id @default(cuid())
+  numero       String   @unique
+  clientId     String
+  client       Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  type         String   // EPARGNE, COURANT, CREDIT, DEPOT_TERME
+  libelle      String?
+  solde        Float    @default(0)
+  soldeBloque  Float    @default(0)
+  devise       String   @default("XOF")
+  dateOuverture String?
+  statut       String   @default("ACTIF") // ACTIF, BLOQUE, FERME
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  transactions Transaction[]
+}
+
+// ===== TRANSACTION =====
+model Transaction {
+  id            String   @id @default(cuid())
+  reference     String   @unique
+  clientId      String
+  client        Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  compteId      String?
+  compte        Compte?  @relation(fields: [compteId], references: [id], onDelete: SetNull)
+  type          String   // DEPOT, RETRAIT, VIREMENT, CHANGE, TRANSFERT, CREDIT, DEBIT
+  sens          String   // ENTREE, SORTIE
+  montant       Float
+  devise        String   @default("XOF")
+  frais         Float    @default(0)
+  date          DateTime @default(now())
+  statut        String   @default("VALIDEE") // VALIDEE, EN_ATTENTE, BLOQUEE, REJETEE, SUSPECTE
+  motifBlocage  String?
+
+  // Détails
+  contrepartie  String?  // Bénéficiaire/émetteur
+  compteContre  String?
+  paysContrepartie String?
+  canal         String   @default("AGENCE") // AGENCE, MOBILE, INTERNET, ATM
+  agentId       String?
+  description   String?
+
+  // Analyse
+  estSuspecte   Boolean  @default(false)
+  motifSuspicion String?
+  scoreRisque   Int      @default(0)
+
+  createdAt     DateTime @default(now())
+
+  alertes       Alerte[]
+}
+
+// ===== ALERTE =====
+model Alerte {
+  id            String   @id @default(cuid())
+  reference     String   @unique
+  clientId      String?
+  client        Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  transactionId String?
+  transaction   Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+
+  type          String   // BLOQUANTE, INFORMATIVE
+  categorie     String   // SEUIL, PPE, SANCTIONS, STRUCTURING, VELOCITY, PAYS_RISQUE, PROFIL_INCOHERENT, DOCUMENT
+  severite      String   @default("MOYENNE") // INFO, FAIBLE, MOYENNE, ELEVEE, CRITIQUE
+  titre         String
+  description   String
+  montant       Float?
+
+  statut        String   @default("OUVERTE") // OUVERTE, EN_COURS, ESCALADEE, CLOTUREE, REJETEE
+  assigneeA     String?
+  traiteePar    String?
+  commentaire   String?
+  motifCloture  String?
+  dateTraitement String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ===== SANCTIONS / PPE LISTS =====
+model ListeSanction {
+  id          String   @id @default(cuid())
+  nom         String
+  prenom      String?
+  type        String   // PPE, OFAC, ONU, UE, UEMOA, INTERNE
+  nationalite String?
+  dateNaissance String?
+  lieuNaissance String?
+  fonction    String?
+  pays        String?
+  numeroDossier String?
+  motif       String?
+  source      String   // OFAC, ONU, UE, BCEAO, INTERNE
+  statut      String   @default("ACTIF") // ACTIF, RETIRE
+  dateAjout   String?
+  createdAt   DateTime @default(now())
+}
+
+model Screening {
+  id            String   @id @default(cuid())
+  clientId      String?
+  client        Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  nomRecherche  String
+  type          String   // PPE, SANCTIONS, COMPLET
+  resultats     String   // JSON string of matches
+  nombreMatch   Int      @default(0)
+  statut        String   @default("AUCUN_MATCH") // AUCUN_MATCH, MATCH_PARTIEL, MATCH_EXACT, A_VERIFIER
+  details       String?
+  operateur     String?
+  createdAt     DateTime @default(now())
+}
+
+// ===== RÈGLES DE CONFORMITÉ =====
+model RegleConformite {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  nom         String
+  description String?
+  categorie   String   // SEUIL, VELOCITY, PROFIL, PAYS, PPE, STRUCTURING
+  type        String   @default("ALERTE") // ALERTE, BLOCAGE
+  parametres  String   // JSON: { seuil: 10000000, devise: "XOF" }
+  active      Boolean  @default(true)
+  priorite    Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ===== DOCUMENTS KYC =====
+model Document {
+  id          String   @id @default(cuid())
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  type        String   // CNI, JUSTIFICATIF_DOMICILE, FACTURE, CONTRAT, AUTRE
+  nom         String
+  url         String?
+  statut      String   @default("EN_ATTENTE") // EN_ATTENTE, VERIFIE, REJETE
+  dateUpload  String?
+  verifiePar  String?
+  createdAt   DateTime @default(now())
+}
+
+// ===== KYC HISTORIQUE =====
+model KycHistorique {
+  id          String   @id @default(cuid())
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  action      String   // CREATION, MODIFICATION, MISE_A_JOUR_RISQUE, BLOCAGE, DEBLOCAGE, VERIFICATION
+  details     String?
+  ancienneValeur String?
+  nouvelleValeur String?
+  operateur   String?
+  createdAt   DateTime @default(now())
+}
+
+// ===== RAPPORTS =====
+model Rapport {
+  id          String   @id @default(cuid())
+  reference   String   @unique
+  type        String   // SAR, DECLARATION, STATISTIQUE, AUDIT
+  titre       String
+  periode     String?
+  contenu     String
+  statut      String   @default("BROUILLON") // BROUILLON, SOUMIS, VALIDE
+  creePar     String?
+  dateDebut   String?
+  dateFin     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ===== AUDIT LOG =====
+model AuditLog {
+  id          String   @id @default(cuid())
+  action      String
+  module      String
+  entite      String?
+  entiteId    String?
+  utilisateur String?
+  details     String?
+  ip          String?
+  createdAt   DateTime @default(now())
+}
+
+// ===== PARAMÈTRES SYSTÈME =====
+model Parametre {
+  id          String   @id @default(cuid())
+  cle         String   @unique
+  valeur      String
+  description String?
+  updatedAt   DateTime @updatedAt
+}

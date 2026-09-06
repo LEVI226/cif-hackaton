@@ -26,6 +26,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { AIAnalyse } from '@/components/shared/ai-analyse'
 
 export function ClientsView() {
   const [search, setSearch] = useState('')
@@ -226,7 +227,7 @@ function ClientDetail({ clientId, onClose }: { clientId: string; onClose: () => 
   }
 
   const sg = client.soldeGlobal || {}
-  const sr = client.scoreRisque || {}
+  const sr = client.scoreRisqueCalcule || {}
 
   return (
     <div className="space-y-4 animate-fade-in">
@@ -460,6 +461,7 @@ function ClientDetail({ clientId, onClose }: { clientId: string; onClose: () => 
               </div>
             </CardContent>
           </Card>
+          <AIAnalyse type="client" id={client.id} title="Analyse IA du client" description="Analyse approfondie du profil de risque par intelligence artificielle" />
         </TabsContent>
 
         {/* Historique KYC */}

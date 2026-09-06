@@ -22,6 +22,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
 } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { AIAnalyse } from '@/components/shared/ai-analyse'
 
 export function RapportsView() {
   const [tab, setTab] = useState('liste')
@@ -202,6 +203,7 @@ function StatistiquesView() {
           </div>
         </CardContent>
       </Card>
+      <AIAnalyse type="rapport" title="Rapport IA de synthèse" description="Génération automatique d'un rapport de synthèse de conformité par intelligence artificielle" />
     </div>
   )
 }

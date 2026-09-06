@@ -25,6 +25,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { AIAnalyse } from '@/components/shared/ai-analyse'
 
 export function AlertesView() {
   const [search, setSearch] = useState('')
@@ -277,6 +278,9 @@ function AlerteDetail({ alerteId, onClose }: { alerteId: string; onClose: () => 
           </CardContent>
         </Card>
       )}
+
+      {/* AI Analysis */}
+      <AIAnalyse type="alerte" id={alerte.id} title="Analyse IA de l'alerte" description="Recommandation de traitement par intelligence artificielle" />
 
       {/* Actions */}
       {alerte.statut !== 'CLOTUREE' && alerte.statut !== 'REJETEE' && (

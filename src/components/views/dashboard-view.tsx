@@ -4,8 +4,11 @@ import { useQuery } from '@tanstack/react-query'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { KpiCard } from '@/components/shared/kpi-card'
 import { RiskBadge, SeveriteBadge, StatutBadge, TypeBadge, ScoreBar } from '@/components/shared/badges'
+import { GeoRiskMap } from '@/components/shared/geo-risk-map'
+import { useRealtime } from '@/components/realtime-provider'
 import { formatFCFA, formatNumber, formatCompact, timeAgo, CATEGORIE_ALERTE_LABELS } from '@/lib/format'
 import { useAppStore } from '@/lib/store'
+import { cn } from '@/lib/utils'
 import {
   Users, ShieldAlert, ArrowLeftRight, Bell, TrendingUp, Globe2,
   AlertTriangle, Ban, Eye, ShieldCheck, Search, Activity,
@@ -30,6 +33,7 @@ export function DashboardView() {
   const setView = useAppStore((s) => s.setView)
   const setAlerteId = useAppStore((s) => s.setAlerteId)
   const setClientId = useAppStore((s) => s.setClientId)
+  const { alerts: realtimeAlerts } = useRealtime()
 
   if (isLoading || !data) {
     return (
@@ -81,6 +85,27 @@ export function DashboardView() {
           >
             Traiter <ChevronRight className="w-4 h-4" />
           </button>
+        </div>
+      )}
+
+      {/* Real-time alerts ticker */}
+      {realtimeAlerts.length > 0 && (
+        <div className="rounded-xl border border-violet-200 bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-950/40 dark:to-fuchsia-950/30 p-3 animate-slide-in">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-2 h-2 rounded-full bg-violet-500 animate-pulse" />
+            <span className="text-xs font-semibold text-violet-700 dark:text-violet-300">Alertes en temps réel ({realtimeAlerts.length})</span>
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {realtimeAlerts.slice(0, 5).map((a, i) => (
+              <div key={i} className={cn(
+                'shrink-0 px-3 py-1.5 rounded-lg text-xs border max-w-xs',
+                a.type === 'BLOQUANTE' ? 'bg-red-100 dark:bg-red-950/50 border-red-300 text-red-700 dark:text-red-300' : 'bg-amber-100 dark:bg-amber-950/50 border-amber-300 text-amber-700 dark:text-amber-300'
+              )}>
+                <div className="font-medium truncate">{a.titre}</div>
+                <div className="text-[10px] opacity-70">{a.client || '—'} · {timeAgo(a.timestamp)}</div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -270,23 +295,26 @@ export function DashboardView() {
       </div>
 
       {/* Types de transactions */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">Répartition par type de transaction</CardTitle>
-          <CardDescription className="text-xs">30 derniers jours</CardDescription>
-        </CardHeader>
-        <CardContent className="pt-2">
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={parType} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.9 0 0)" vertical={false} />
-              <XAxis dataKey="name" tick={{ fontSize: 11 }} stroke="oklch(0.6 0 0)" />
-              <YAxis tick={{ fontSize: 11 }} stroke="oklch(0.6 0 0)" />
-              <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid oklch(0.9 0 0)', fontSize: 12 }} />
-              <Bar dataKey="value" fill="#10b981" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Répartition par type de transaction</CardTitle>
+            <CardDescription className="text-xs">30 derniers jours</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-2">
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={parType} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.9 0 0)" vertical={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 11 }} stroke="oklch(0.6 0 0)" />
+                <YAxis tick={{ fontSize: 11 }} stroke="oklch(0.6 0 0)" />
+                <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid oklch(0.9 0 0)', fontSize: 12 }} />
+                <Bar dataKey="value" fill="#10b981" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+        <GeoRiskMap />
+      </div>
     </div>
   )
 }

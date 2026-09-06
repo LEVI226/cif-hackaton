@@ -19,9 +19,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     if (!client) return NextResponse.json({ error: 'Client non trouvé' }, { status: 404 })
 
     const soldeGlobal = await calculerSoldeGlobal(client.id)
-    const scoreRisque = await calculerScoreRisqueClient(client.id)
+    const scoreRisqueCalcule = await calculerScoreRisqueClient(client.id)
 
-    return NextResponse.json({ ...client, soldeGlobal, scoreRisque })
+    return NextResponse.json({ ...client, soldeGlobal, scoreRisqueCalcule })
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 })
   }

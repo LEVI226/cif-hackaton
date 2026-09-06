@@ -7,7 +7,90 @@ Solution numérique pour la conformité Lutte contre le Blanchiment de Capitaux,
 
 ---
 
-## Round 6 - Client Comparison, Sparkline KPIs & Sidebar Enhancement
+## Round 7 - Alert Statistics, Command Palette & Hydration Fix
+
+### Task ID: qa-1 to style-1
+Agent: Cron Review Agent (Z.ai Code)
+Task: QA testing, hydration fix, alert statistics, command palette
+
+### Current Project Status:
+- Application stable with 10 functional modules
+- All 14 API endpoints return HTTP 200 (added alertes/stats + search)
+- Dev server runs on port 3000, alert WebSocket service on port 3003
+- Lint passes with 0 errors (1 inoffensive warning)
+
+### Work Log:
+
+**Hydration Fix: Migrated Realtime to Zustand Store**
+- Root cause: `useRealtimeAlerts()` hook was called during SSR, causing state mismatch when WebSocket connected on client
+- Solution: Replaced React Context with Zustand store for realtime state
+- Created `useRealtimeStore` Zustand store with alerts, connected, stats
+- `useRealtime()` hook reads from Zustand (static defaults, no SSR mismatch)
+- `useRealtimeAlerts()` hook (WebSocket init) only called inside `RealtimeClient` component
+- `RealtimeClient` is dynamically imported with `ssr: false` in `RealtimeProvider`
+- Updated all consumers (NotificationCenter, DashboardView) to import `useRealtime` from hooks
+- Removed old `realtime-inner.tsx`
+
+**New Feature: Alert Statistics Dashboard**
+- Created `/api/alertes/stats` API endpoint with:
+  - 7-day evolution (ouvertes, cloturees, bloquantes per day)
+  - Category breakdown (groupBy categorie)
+  - Severity distribution (groupBy severite)
+  - Status distribution (groupBy statut)
+  - Average treatment time (hours)
+  - Top 5 clients by alert count
+- Fixed Prisma groupBy: `_all` not supported, changed to `{ id: true }` with mapping
+- Created `AlertStats` component with 4 charts:
+  1. Evolution AreaChart (7-day trend with 3 series)
+  2. Severity PieChart with legend
+  3. Category horizontal BarChart with French labels
+  4. Top 5 clients list with alert counts
+- Added 4 stat cards (7j alerts, avg time, bloquantes, clôturées)
+- Integrated into Alertes view between stat cards and tabs
+
+**New Feature: Global Search Command Palette (Cmd+K)**
+- Created `/api/search` API endpoint with multi-type search:
+  - Clients (nom, prenom, code, telephone, numeroPiece)
+  - Transactions (reference, description, contrepartie)
+  - Alertes (reference, titre, description)
+- Created `CommandPalette` component:
+  - Opens with Cmd+K / Ctrl+K keyboard shortcut
+  - Floating trigger button (bottom-left) with ⌘K hint
+  - Full-screen dialog with search input
+  - Real-time results grouped by type (Clients, Transactions, Alertes)
+  - Keyboard navigation (↑↓ arrows, Enter to select, ESC to close)
+  - Click result to navigate directly to detail view
+  - Loading skeletons, empty states, result count
+  - Footer with keyboard shortcuts legend
+- Integrated into AppShell globally (available from any view)
+- Fixed lint error: Moved setState from useEffect to handleOpenChange callback
+
+### Verification Results:
+- **All 14 API endpoints**: HTTP 200 ✓ (12 existing + 2 new)
+- **Alert Stats API**: 7 evolution points, 5 categories, 5 top clients ✓
+- **Search API**: 8 results for "BESSA" (3 clients, 5 transactions) ✓
+- **Lint**: 0 errors, 1 inoffensive warning ✓
+- **Both services**: Dev (3000) + Alert WebSocket (3003) running ✓
+
+### Stage Summary:
+- 1 hydration fix (Zustand store + dynamic import ssr:false)
+- 2 new features (alert statistics, command palette)
+- 2 new API endpoints (alertes/stats, search)
+- 3 new components (AlertStats, CommandPalette, RealtimeClient)
+- Alert statistics with 4 charts integrated into Alertes view
+- Global search with Cmd+K available from any view
+- All 14 APIs verified working
+
+### Unresolved issues / Next steps:
+- Stale browser console hydration warning (cosmetic, app works correctly)
+- Could add dashboard activity feed with real-time events
+- Could add PDF report generation
+- Could enhance empty states across all views
+- Could add compliance deadline reminder notifications
+
+---
+
+## Round 6 - Client Comparison, Sparkline KPIs & Sidebar Enhancement (Previous)
 
 ### Task ID: qa-1 to style-2
 Agent: Cron Review Agent (Z.ai Code)

@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator, DropdownMenuLabel
 } from '@/components/ui/dropdown-menu'
 import { useAppStore } from '@/lib/store'
-import { useRealtime } from '@/components/realtime-provider'
+import { useRealtime } from '@/hooks/use-realtime'
 import { formatFCFA, timeAgo, CATEGORIE_ALERTE_LABELS } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { ScrollArea } from '@/components/ui/scroll-area'

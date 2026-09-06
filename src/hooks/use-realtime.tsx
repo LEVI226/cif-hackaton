@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { create } from 'zustand'
+import { useEffect, useRef } from 'react'
 import { io, Socket } from 'socket.io-client'
 import { toast } from 'sonner'
 
@@ -27,10 +28,36 @@ export interface RealtimeTransaction {
   timestamp: string
 }
 
+interface RealtimeState {
+  alerts: RealtimeAlert[]
+  connected: boolean
+  stats: { alertesOuvertes: number; transactionsJour: number; totalClients: number } | null
+  setAlerts: (a: RealtimeAlert[]) => void
+  addAlert: (a: RealtimeAlert) => void
+  setConnected: (c: boolean) => void
+  setStats: (s: any) => void
+}
+
+export const useRealtimeStore = create<RealtimeState>((set) => ({
+  alerts: [],
+  connected: false,
+  stats: null,
+  setAlerts: (alerts) => set({ alerts }),
+  addAlert: (alert) => set((s) => ({ alerts: [alert, ...s.alerts].slice(0, 20) })),
+  setConnected: (connected) => set({ connected }),
+  setStats: (stats) => set({ stats }),
+}))
+
+// Hook for components to read realtime state (no SSR issues since defaults are static)
+export function useRealtime() {
+  return useRealtimeStore()
+}
+
+// Hook that initializes the WebSocket connection - must be called client-side only
 export function useRealtimeAlerts() {
-  const [alerts, setAlerts] = useState<RealtimeAlert[]>([])
-  const [connected, setConnected] = useState(false)
-  const [stats, setStats] = useState<{ alertesOuvertes: number; transactionsJour: number; totalClients: number } | null>(null)
+  const addAlert = useRealtimeStore((s) => s.addAlert)
+  const setConnected = useRealtimeStore((s) => s.setConnected)
+  const setStats = useRealtimeStore((s) => s.setStats)
   const socketRef = useRef<Socket | null>(null)
 
   useEffect(() => {
@@ -46,8 +73,7 @@ export function useRealtimeAlerts() {
     socket.on('reconnect', () => setConnected(true))
 
     socket.on('alert:new', (alert: RealtimeAlert) => {
-      setAlerts((prev) => [alert, ...prev].slice(0, 20))
-
+      addAlert(alert)
       const isBloquante = alert.type === 'BLOQUANTE'
       const prefix = isBloquante ? '🚫 ' : '⚠️ '
       if (isBloquante) {
@@ -77,7 +103,5 @@ export function useRealtimeAlerts() {
     return () => {
       socket.disconnect()
     }
-  }, [])
-
-  return { alerts, connected, stats }
+  }, [addAlert, setConnected, setStats])
 }

@@ -18,6 +18,7 @@ import { useAppStore } from '@/lib/store'
 import { Footer } from '@/components/layout/footer'
 import { RealtimeProvider } from '@/components/realtime-provider'
 import { TransactionDetailModal } from '@/components/shared/transaction-detail-modal'
+import { CommandPalette } from '@/components/shared/command-palette'
 
 export function AppShell() {
   const [queryClient] = useState(() => new QueryClient({
@@ -58,6 +59,7 @@ export function AppShell() {
           <Footer />
         </div>
         <TransactionDetailModal />
+        <CommandPalette />
       </RealtimeProvider>
     </QueryClientProvider>
   )

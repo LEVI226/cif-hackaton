@@ -26,6 +26,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AIAnalyse } from '@/components/shared/ai-analyse'
+import { AlertStats } from '@/components/shared/alert-stats'
 
 export function AlertesView() {
   const [search, setSearch] = useState('')
@@ -78,6 +79,9 @@ export function AlertesView() {
           <div className="text-xl font-bold mt-1 text-amber-600">{alertes.filter((a: any) => a.statut === 'OUVERTE').length}</div>
         </Card>
       </div>
+
+      {/* Statistiques détaillées */}
+      <AlertStats />
 
       {/* Onglets statut */}
       <Tabs value={filtreStatut} onValueChange={setFiltreStatut}>

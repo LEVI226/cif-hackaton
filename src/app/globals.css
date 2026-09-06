@@ -187,3 +187,134 @@
 .risk-meter {
   background: linear-gradient(90deg, oklch(0.7 0.15 145), oklch(0.75 0.15 85), oklch(0.65 0.2 25));
 }
+
+/* Stagger animation for lists */
+@keyframes stagger-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-stagger {
+  animation: stagger-in 0.4s ease-out backwards;
+}
+
+/* Shimmer for skeleton loaders */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, oklch(0.92 0.005 150) 25%, oklch(0.96 0.005 150) 50%, oklch(0.92 0.005 150) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+.dark .skeleton-shimmer {
+  background: linear-gradient(90deg, oklch(0.22 0.02 165) 25%, oklch(0.28 0.02 165) 50%, oklch(0.22 0.02 165) 75%);
+  background-size: 200% 100%;
+}
+
+/* Scale-in animation */
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in {
+  animation: scale-in 0.25s ease-out;
+}
+
+/* Slide from right */
+@keyframes slide-from-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-right {
+  animation: slide-from-right 0.3s ease-out;
+}
+
+/* Hover lift effect */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px oklch(0 0 0 / 0.1);
+}
+
+/* Card shine effect */
+.card-shine {
+  position: relative;
+  overflow: hidden;
+}
+.card-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, oklch(1 0 0 / 0.1), transparent);
+  transition: left 0.6s ease;
+}
+.card-shine:hover::before {
+  left: 150%;
+}
+
+/* Number counter animation */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-count {
+  animation: count-up 0.5s ease-out;
+}
+
+/* Bounce for notification badges */
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.animate-bounce-soft {
+  animation: bounce-soft 1s ease-in-out infinite;
+}
+
+/* Glow pulse for critical alerts */
+@keyframes glow-pulse-critical {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(0.577 0.245 27.325 / 0.5); }
+  50% { box-shadow: 0 0 0 12px oklch(0.577 0.245 27.325 / 0); }
+}
+.glow-critical {
+  animation: glow-pulse-critical 2s infinite;
+}
+
+/* Grid pattern background */
+.grid-bg {
+  background-image:
+    linear-gradient(oklch(0.9 0.01 150 / 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.9 0.01 150 / 0.3) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.dark .grid-bg {
+  background-image:
+    linear-gradient(oklch(0.3 0.02 165 / 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.3 0.02 165 / 0.2) 1px, transparent 1px);
+}
+
+/* Focus ring enhancement */
+.focus-ring:focus-visible {
+  outline: 2px solid oklch(0.51 0.13 158);
+  outline-offset: 2px;
+}
+
+/* Text gradient animation */
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.gradient-animated {
+  background: linear-gradient(135deg, oklch(0.51 0.13 158), oklch(0.6 0.12 200), oklch(0.5 0.15 260), oklch(0.51 0.13 158));
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 4s ease infinite;
+}
+

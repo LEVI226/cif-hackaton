@@ -6,6 +6,7 @@ import { KpiCard } from '@/components/shared/kpi-card'
 import { RiskBadge, SeveriteBadge, StatutBadge, TypeBadge, ScoreBar } from '@/components/shared/badges'
 import { GeoRiskMap } from '@/components/shared/geo-risk-map'
 import { ComplianceGauge } from '@/components/shared/compliance-gauge'
+import { RiskHeatmap } from '@/components/shared/risk-heatmap'
 import { useRealtime } from '@/components/realtime-provider'
 import { formatFCFA, formatNumber, formatCompact, timeAgo, CATEGORIE_ALERTE_LABELS } from '@/lib/format'
 import { useAppStore } from '@/lib/store'
@@ -381,6 +382,9 @@ export function DashboardView() {
         </Card>
         <GeoRiskMap />
       </div>
+
+      {/* Risk Heatmap */}
+      <RiskHeatmap />
     </div>
   )
 }

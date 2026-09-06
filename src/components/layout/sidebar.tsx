@@ -4,7 +4,7 @@ import { useAppStore, type ViewName } from '@/lib/store'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard, Users, ArrowLeftRight, Bell, Search,
-  FileText, Shield, History, ShieldCheck, ChevronRight
+  FileText, Shield, History, ShieldCheck, ChevronRight, Calendar
 } from 'lucide-react'
 
 const navItems: Array<{ id: ViewName; label: string; icon: any; description: string }> = [
@@ -14,6 +14,7 @@ const navItems: Array<{ id: ViewName; label: string; icon: any; description: str
   { id: 'alertes', label: 'Alertes', icon: Bell, description: 'Gestion des alertes' },
   { id: 'screening', label: 'Screening', icon: Search, description: 'PPE & Sanctions' },
   { id: 'rapports', label: 'Rapports', icon: FileText, description: 'Conformité & SAR' },
+  { id: 'calendrier', label: 'Calendrier', icon: Calendar, description: 'Échéances réglementaires' },
   { id: 'regles', label: 'Règles', icon: Shield, description: 'Configuration' },
   { id: 'audit', label: 'Audit', icon: History, description: 'Journal d\'audit' },
 ]

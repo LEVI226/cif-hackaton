@@ -20,6 +20,7 @@ const viewTitles: Record<ViewName, { title: string; subtitle: string }> = {
   alertes: { title: 'Gestion des alertes', subtitle: 'Alertes bloquantes et informatives LBC/FT/FP' },
   screening: { title: 'Screening PPE & Sanctions', subtitle: 'Vérification contre les listes de sanctions' },
   rapports: { title: 'Rapports de conformité', subtitle: 'Déclarations TRA, SAR et statistiques' },
+  calendrier: { title: 'Calendrier réglementaire', subtitle: 'Échéances LBC/FT/FP et obligations BCEAO/GIABA' },
   regles: { title: 'Règles de conformité', subtitle: 'Configuration du moteur de détection' },
   audit: { title: 'Journal d\'audit', subtitle: 'Traçabilité des actions système' },
 }

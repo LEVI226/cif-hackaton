@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 import ReactMarkdown from 'react-markdown'
 
 interface AIAnalyseProps {
-  type: 'client' | 'alerte' | 'rapport'
+  type: 'client' | 'alerte' | 'rapport' | 'transaction'
   id?: string
   title?: string
   description?: string
@@ -28,10 +28,18 @@ export function AIAnalyse({ type, id, title, description }: AIAnalyseProps) {
     setError(null)
     setAnalysis(null)
     try {
-      const r = await fetch('/api/ai-analyse', {
+      let url = '/api/ai-analyse'
+      let body: any = { type }
+      if (type === 'client') body.clientId = id
+      else if (type === 'alerte') body.alerteId = id
+      else if (type === 'transaction') {
+        url = `/api/transactions/${id}/ai-analyse`
+        body = {}
+      }
+      const r = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, [type === 'client' ? 'clientId' : type === 'alerte' ? 'alerteId' : 'type']: id || type }),
+        body: JSON.stringify(body),
       })
       const j = await r.json()
       if (r.ok) {

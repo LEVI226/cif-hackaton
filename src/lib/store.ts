@@ -9,6 +9,7 @@ export type ViewName =
   | 'rapports'
   | 'regles'
   | 'audit'
+  | 'calendrier'
 
 interface AppState {
   view: ViewName

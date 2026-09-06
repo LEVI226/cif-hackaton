@@ -2,7 +2,7 @@
 
 import { useAppStore, type ViewName } from '@/lib/store'
 import { useQuery } from '@tanstack/react-query'
-import { Bell, Search, Moon, Sun, Globe, ChevronDown } from 'lucide-react'
+import { Search, Moon, Sun, Globe, ChevronDown } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -12,6 +12,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel
 } from '@/components/ui/dropdown-menu'
+import { NotificationCenter } from '@/components/layout/notification-center'
 
 const viewTitles: Record<ViewName, { title: string; subtitle: string }> = {
   dashboard: { title: 'Tableau de bord', subtitle: 'Vue d\'ensemble de la conformité LBC/FT/FP' },
@@ -30,16 +31,6 @@ export function Header() {
   const setView = useAppStore((s) => s.setView)
   const [dark, setDark] = useState(false)
   const [now, setNow] = useState(new Date())
-
-  const { data: alertesCount } = useQuery({
-    queryKey: ['alertes-count'],
-    queryFn: async () => {
-      const r = await fetch('/api/alertes?statut=OUVERTE&limit=1')
-      const j = await r.json()
-      return j.total || 0
-    },
-    refetchInterval: 30_000,
-  })
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
@@ -85,20 +76,7 @@ export function Header() {
             {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </Button>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 relative"
-            onClick={() => setView('alertes')}
-            aria-label="Alertes"
-          >
-            <Bell className="w-4 h-4" />
-            {alertesCount && alertesCount > 0 ? (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
-                {alertesCount > 99 ? '99+' : alertesCount}
-              </span>
-            ) : null}
-          </Button>
+          <NotificationCenter />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -128,7 +106,7 @@ export function Header() {
 
         <div className="hidden xl:flex items-center gap-2 text-xs text-muted-foreground border-l border-border pl-4">
           <Globe className="w-3.5 h-3.5" />
-          <div className="tabular-nums">
+          <div className="tabular-nums" suppressHydrationWarning>
             {now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
           </div>
           <Badge variant="outline" className="text-[10px] h-5">UTC+0</Badge>

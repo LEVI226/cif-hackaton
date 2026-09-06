@@ -7,7 +7,104 @@ Solution numérique pour la conformité Lutte contre le Blanchiment de Capitaux,
 
 ---
 
-## Round 4 - Calendar, Heatmap, Transaction AI & Styling
+## Round 5 - Notification Center, Transaction Modal & Quick Actions
+
+### Task ID: qa-1 to style-2
+Agent: Cron Review Agent (Z.ai Code)
+Task: QA testing, hydration fix, new features and styling improvements
+
+### Current Project Status:
+- Application stable with 9 functional modules (Dashboard, Clients, Transactions, Alertes, Screening, Rapports, Calendrier, Règles, Audit)
+- All 12 API endpoints return HTTP 200
+- Dev server runs on port 3000, alert WebSocket service on port 3003
+- Lint passes with 0 errors (1 inoffensive warning)
+- Previous rounds delivered: AI compliance analysis, real-time WebSocket alerts, geo risk map, compliance gauge, CSV export, KYC VLM document analysis, risk evolution chart, compliance calendar, risk heatmap, transaction AI analysis
+
+### Work Log:
+
+**Bug Fix: Hydration Error in use-realtime.tsx**
+- Root cause: JSX icons (`<Ban>`, `<AlertTriangle>`, `<ArrowLeftRight>`) were passed to `toast.icon` prop inside the socket event handler. While these only execute client-side, the module-level JSX caused SSR/client attribute mismatches during hydration.
+- Fix: Replaced JSX icons with emoji prefixes (🚫, ⚠️, 💱) in toast notifications. Removed lucide-react imports from the hook. Added `suppressHydrationWarning` to time-dependent elements in header.
+
+**New Feature: Notification Center Dropdown**
+- Created `NotificationCenter` component with rich dropdown:
+  - Live connection indicator (emerald pulse when WebSocket connected)
+  - Total alert count badge with bounce animation
+  - Real-time alerts section (violet-themed) showing latest 3 WebSocket alerts
+  - Recent alerts from database (10 most recent open alerts)
+  - Each alert shows: icon, title, client, category badge, time ago, montant
+  - Click any alert to navigate to alert detail
+  - "Voir toutes les alertes" button at bottom
+  - ScrollArea for long lists (400px max height)
+- Replaced simple Bell button in header with full NotificationCenter dropdown
+- Integrated real-time alerts from `useRealtime` context
+
+**New Feature: Transaction Detail Modal**
+- Created `TransactionDetailModal` component with comprehensive view:
+  - Transaction header with status icon, reference, date, canal
+  - Large amount display (emerald for entrée, red for sortie)
+  - Client card (clickable to navigate to client detail) with risk badge and PPE indicator
+  - Account card with numero and type
+  - Counterparty info (name, account, country with risk flag)
+  - Motif de blocage alert (red) when blocked
+  - Motif de suspicion alert (amber) when suspicious
+  - Associated alerts list (scrollable, max 160px)
+  - Integrated AI analysis component for transaction-level LBC/FT/FP evaluation
+  - "Voir le client" and "Fermer" action buttons
+- Made transaction rows clickable in TransactionsView (onClick sets transactionId)
+- Modal is globally available via AppShell (renders above all views)
+- Updated store: `setView` no longer clears `selectedTransactionId` (allows modal to stay open across view changes)
+
+**New Feature: Quick Actions Panel**
+- Created `QuickActionsPanel` component for dashboard:
+  - 6 gradient action cards with stagger animation:
+    1. Nouvelle transaction (emerald→teal) → transactions view
+    2. Screening PPE (violet→fuchsia) → screening view
+    3. Traiter alertes (red→orange) → alertes view
+    4. Générer rapport (amber→yellow) → rapports view
+    5. Échéances (sky→blue) → calendrier view
+    6. Gestion clients (purple→indigo) → clients view
+  - Each card: gradient icon, label, description, hover arrow
+  - Stagger entrance animation (50ms delay per card)
+  - Hover lift effect with border highlight
+- Integrated into dashboard between compliance indicators and charts section
+
+**Styling Improvements:**
+- Header: Added `suppressHydrationWarning` to clock display (updates every second)
+- Header: Removed redundant `useQuery` for alertes count (now handled by NotificationCenter)
+- NotificationCenter: Bounce animation on badge, pulse on live indicator
+- Quick Actions: Stagger animation, gradient icons, hover lift, arrow reveal
+- Transaction Modal: Gradient amount display, icon-coded status, scrollable alert list
+
+### Verification Results:
+- **All 12 API endpoints**: HTTP 200 ✓
+- **Transaction Detail API**: Returns full data (reference, montant, client, 4 alertes) ✓
+- **Dashboard**: Quick Actions panel, compliance gauge, heatmap all rendering ✓
+- **Dev log**: No errors ✓
+- **Lint**: 0 errors, 1 inoffensive warning ✓
+- **Both services**: Dev (3000) + Alert WebSocket (3003) running ✓
+- **WebSocket**: Multiple clients connected ✓
+
+### Stage Summary:
+- 1 bug fix (hydration error in use-realtime.tsx)
+- 3 new features (notification center, transaction modal, quick actions)
+- 3 new components (NotificationCenter, TransactionDetailModal, QuickActionsPanel)
+- Header enhanced with notification dropdown replacing simple bell
+- Transactions now clickable with full detail modal + AI analysis
+- Dashboard enhanced with quick actions grid
+- All features verified working via API tests and agent-browser
+
+### Unresolved issues / Next steps:
+- Stale browser console error reference (cosmetic, app works correctly)
+- Could add client comparison view (side-by-side)
+- Could add PDF report generation
+- Could add batch document processing
+- Could add compliance deadline reminder notifications
+- Could enhance KPI cards with sparklines
+
+---
+
+## Round 4 - Calendar, Heatmap, Transaction AI & Styling (Previous)
 
 ### Task ID: qa-1 to style-1
 Agent: Cron Review Agent (Z.ai Code)

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 import { toast } from 'sonner'
-import { Bell, AlertTriangle, Ban, ArrowLeftRight } from 'lucide-react'
 
 export interface RealtimeAlert {
   id: string
@@ -49,29 +48,26 @@ export function useRealtimeAlerts() {
     socket.on('alert:new', (alert: RealtimeAlert) => {
       setAlerts((prev) => [alert, ...prev].slice(0, 20))
 
-      // Show toast notification
       const isBloquante = alert.type === 'BLOQUANTE'
+      const prefix = isBloquante ? '🚫 ' : '⚠️ '
       if (isBloquante) {
-        toast.error(alert.titre, {
+        toast.error(prefix + alert.titre, {
           description: alert.client ? `Client: ${alert.client}` : alert.description,
           duration: 8000,
-          icon: <Ban className="w-4 h-4" />,
         })
       } else {
-        toast.warning(alert.titre, {
+        toast.warning(prefix + alert.titre, {
           description: alert.client ? `Client: ${alert.client}` : alert.description,
           duration: 5000,
-          icon: <AlertTriangle className="w-4 h-4" />,
         })
       }
     })
 
     socket.on('transaction:new', (trx: RealtimeTransaction) => {
       if (trx.estSuspecte || trx.statut === 'BLOQUEE') {
-        toast.info(`Transaction ${trx.statut}`, {
+        toast.info(`💱 Transaction ${trx.statut}`, {
           description: `${trx.reference} - ${trx.client || ''} - ${trx.montant.toLocaleString('fr-FR')} FCFA`,
           duration: 4000,
-          icon: <ArrowLeftRight className="w-4 h-4" />,
         })
       }
     })

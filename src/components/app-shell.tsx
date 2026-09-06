@@ -16,6 +16,7 @@ import { CalendrierView } from '@/components/views/calendrier-view'
 import { useAppStore } from '@/lib/store'
 import { Footer } from '@/components/layout/footer'
 import { RealtimeProvider } from '@/components/realtime-provider'
+import { TransactionDetailModal } from '@/components/shared/transaction-detail-modal'
 
 export function AppShell() {
   const [queryClient] = useState(() => new QueryClient({
@@ -54,6 +55,7 @@ export function AppShell() {
           </div>
           <Footer />
         </div>
+        <TransactionDetailModal />
       </RealtimeProvider>
     </QueryClientProvider>
   )

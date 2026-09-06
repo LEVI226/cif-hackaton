@@ -31,6 +31,7 @@ export function TransactionsView() {
   const [filtreSuspecte, setFiltreSuspecte] = useState(false)
   const [live, setLive] = useState(true)
   const [showCreate, setShowCreate] = useState(false)
+  const setTransactionId = useAppStore((s) => s.setTransactionId)
 
   const { data, isLoading } = useQuery({
     queryKey: ['transactions', search, filtreStatut, filtreType, filtreSuspecte],
@@ -153,7 +154,11 @@ export function TransactionsView() {
                   <tr><td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">Aucune transaction</td></tr>
                 ) : (
                   transactions.map((t: any) => (
-                    <tr key={t.id} className={cn('hover:bg-accent/30 transition-colors', t.estSuspecte && 'bg-amber-50/40 dark:bg-amber-950/10')}>
+                    <tr
+                      key={t.id}
+                      onClick={() => setTransactionId(t.id)}
+                      className={cn('hover:bg-accent/30 transition-colors cursor-pointer group', t.estSuspecte && 'bg-amber-50/40 dark:bg-amber-950/10')}
+                    >
                       <td className="px-4 py-3">
                         <div className="font-mono text-xs font-medium">{t.reference}</div>
                         <div className="text-[11px] text-muted-foreground">{formatDateTime(t.date)}</div>

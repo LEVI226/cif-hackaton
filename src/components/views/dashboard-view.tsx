@@ -7,6 +7,7 @@ import { RiskBadge, SeveriteBadge, StatutBadge, TypeBadge, ScoreBar } from '@/co
 import { GeoRiskMap } from '@/components/shared/geo-risk-map'
 import { ComplianceGauge } from '@/components/shared/compliance-gauge'
 import { RiskHeatmap } from '@/components/shared/risk-heatmap'
+import { QuickActionsPanel } from '@/components/shared/quick-actions-panel'
 import { useRealtime } from '@/components/realtime-provider'
 import { formatFCFA, formatNumber, formatCompact, timeAgo, CATEGORIE_ALERTE_LABELS } from '@/lib/format'
 import { useAppStore } from '@/lib/store'
@@ -185,6 +186,9 @@ export function DashboardView() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Quick Actions */}
+      <QuickActionsPanel />
 
       {/* Graphiques */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

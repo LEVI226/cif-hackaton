@@ -30,7 +30,7 @@ export const useAppStore = create<AppState>((set) => ({
   selectedTransactionId: null,
   selectedAlerteId: null,
   sidebarCollapsed: false,
-  setView: (v) => set({ view: v, selectedClientId: null, selectedTransactionId: null, selectedAlerteId: null }),
+  setView: (v) => set({ view: v, selectedClientId: null }),
   setClientId: (id) => set({ selectedClientId: id }),
   setTransactionId: (id) => set({ selectedTransactionId: id }),
   setAlerteId: (id) => set({ selectedAlerteId: id }),

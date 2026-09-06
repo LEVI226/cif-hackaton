@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { BatchScreening } from '@/components/shared/batch-screening'
 
 export function ScreeningView() {
   const [tab, setTab] = useState('screening')
@@ -28,10 +29,12 @@ export function ScreeningView() {
     <Tabs value={tab} onValueChange={setTab} className="space-y-4">
       <TabsList>
         <TabsTrigger value="screening" className="gap-1.5"><Search className="w-3.5 h-3.5" /> Screening</TabsTrigger>
+        <TabsTrigger value="batch" className="gap-1.5"><Users className="w-3.5 h-3.5" /> Lot</TabsTrigger>
         <TabsTrigger value="listes" className="gap-1.5"><Database className="w-3.5 h-3.5" /> Listes PPE & Sanctions</TabsTrigger>
         <TabsTrigger value="historique" className="gap-1.5"><FileSearch className="w-3.5 h-3.5" /> Historique</TabsTrigger>
       </TabsList>
       <TabsContent value="screening"><ScreeningForm /></TabsContent>
+      <TabsContent value="batch"><BatchScreening /></TabsContent>
       <TabsContent value="listes"><ListesView /></TabsContent>
       <TabsContent value="historique"><HistoriqueView /></TabsContent>
     </Tabs>

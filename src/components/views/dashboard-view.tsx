@@ -11,6 +11,7 @@ import { RiskHeatmap } from '@/components/shared/risk-heatmap'
 import { QuickActionsPanel } from '@/components/shared/quick-actions-panel'
 import { DashboardHero } from '@/components/shared/dashboard-hero'
 import { ActivityFeed } from '@/components/shared/activity-feed'
+import { ComplianceWidgets } from '@/components/shared/compliance-widgets'
 import { useRealtime } from '@/hooks/use-realtime'
 import { formatFCFA, formatNumber, formatCompact, timeAgo, CATEGORIE_ALERTE_LABELS } from '@/lib/format'
 import { useAppStore } from '@/lib/store'
@@ -195,6 +196,9 @@ export function DashboardView() {
 
       {/* Quick Actions */}
       <QuickActionsPanel />
+
+      {/* Compliance Donut Widgets */}
+      <ComplianceWidgets />
 
       {/* Graphiques */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

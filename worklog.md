@@ -7,7 +7,82 @@ Solution numérique pour la conformité Lutte contre le Blanchiment de Capitaux,
 
 ---
 
-## Round 9 - Settings View, Enhanced Footer & Styling
+## Round 10 - Batch Screening, Compliance Widgets & Donut Charts
+
+### Task ID: qa-1 to style-2
+Agent: Cron Review Agent (Z.ai Code)
+Task: QA testing, batch screening, compliance widgets, styling improvements
+
+### Current Project Status:
+- Application stable with 11 functional modules
+- All 17 API endpoints return HTTP 200 (added dashboard/widgets + screening/batch)
+- Dev server runs on port 3000, alert WebSocket service on port 3003
+- Lint passes with 0 errors (1 inoffensive warning)
+
+### Work Log:
+
+**New Feature: Batch Screening (CSV Upload)**
+- Created `/api/screening/batch` POST endpoint:
+  - Accepts array of names (max 100 per batch)
+  - Runs screening against PPE and sanctions lists
+  - Creates Screening records for each name
+  - Returns detailed results with matches
+  - Logs batch screening in audit log
+- Created `BatchScreening` component:
+  - Textarea for manual entry (one name per line)
+  - CSV file import support
+  - Smart parsing: comma, tab, semicolon, or space separated
+  - Name counter with live detection
+  - Results summary: total, matches, clean (3 stat cards)
+  - Color-coded results list (red=exact, amber=partial, emerald=clean)
+  - Each result shows matches with score, type, fonction, pays, motif
+  - CSV export of results
+  - Stagger animation on results
+  - Loading state with spinner
+- Added "Lot" tab to Screening view
+
+**New Feature: Compliance Donut Widgets**
+- Created `/api/dashboard/widgets` GET endpoint:
+  - Risk distribution (FAIBLE/MOYEN/ELEVE/PROHIBITIF)
+  - Transaction status distribution (VALIDEE/BLOQUEE/SUSPECTE/EN_ATTENTE)
+  - Alert type distribution (BLOQUANTE/INFORMATIVE)
+  - Alert by categorie and statut
+  - Transaction flow by type (entree/sortie/count)
+  - Canal distribution
+  - Hourly activity (24h)
+- Created `ComplianceWidgets` component with 3 donut charts:
+  1. Risk Distribution Donut - client risk levels with legend
+  2. Transaction Status Donut - 30-day transaction statuses
+  3. Alert Type Donut - bloquantes vs informatives with total
+- Each donut uses Recharts PieChart with inner radius, color-coded segments, hover tooltips
+- Integrated into dashboard between Quick Actions and main charts
+
+### Verification Results:
+- **All 17 API endpoints**: HTTP 200 (15 existing + 2 new) ✓
+- **Dashboard Widgets API**: Risk (FAIBLE:31, MOYEN:14, ELEVE:3), Trx (VALIDEE:196, BLOQUEE:10, SUSPECTE:10), Alerts (BLOQUANTE:10, INFORMATIVE:21) ✓
+- **Batch Screening**: 3 names tested - COMPAORE Blaise (MATCH_EXACT), DIARRA Souleymane (MATCH_EXACT), TEST Nomatch (AUCUN_MATCH) ✓
+- **Dev log**: No errors ✓
+- **Lint**: 0 errors, 1 inoffensive warning ✓
+- **Both services**: Dev (3000) + Alert WebSocket (3003) running ✓
+
+### Stage Summary:
+- 2 new features (batch screening, compliance donut widgets)
+- 2 new API endpoints (screening/batch, dashboard/widgets)
+- 2 new components (BatchScreening, ComplianceWidgets)
+- Batch screening supports up to 100 names with CSV import/export
+- 3 donut charts on dashboard (risk, transaction status, alert types)
+- All 17 APIs verified working
+
+### Unresolved issues / Next steps:
+- Stale browser console hydration warning (cosmetic, app works correctly)
+- Could add PDF report generation
+- Could enhance empty states across all views
+- Could add transaction flow Sankey diagram
+- Could add user management module
+
+---
+
+## Round 9 - Settings View, Enhanced Footer & Styling (Previous)
 
 ### Task ID: qa-1 to style-2
 Agent: Cron Review Agent (Z.ai Code)

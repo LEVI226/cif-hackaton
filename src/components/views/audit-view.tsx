@@ -4,12 +4,13 @@ import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { formatDateTime } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import {
   Search, History, Shield, UserCheck, FileText, Bell, LogIn,
-  Ban, Eye, Filter
+  Ban, Eye, Filter, Download
 } from 'lucide-react'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
@@ -80,6 +81,9 @@ export function AuditView() {
             <SelectItem value="RAPPORTS">Rapports</SelectItem>
           </SelectContent>
         </Select>
+        <Button variant="outline" onClick={() => window.open('/api/export?type=audit', '_blank')} className="h-10 gap-2 shrink-0">
+          <Download className="w-4 h-4" /> Export
+        </Button>
       </div>
 
       <Card>

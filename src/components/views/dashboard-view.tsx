@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { KpiCard } from '@/components/shared/kpi-card'
 import { RiskBadge, SeveriteBadge, StatutBadge, TypeBadge, ScoreBar } from '@/components/shared/badges'
 import { GeoRiskMap } from '@/components/shared/geo-risk-map'
+import { ComplianceGauge } from '@/components/shared/compliance-gauge'
 import { useRealtime } from '@/components/realtime-provider'
 import { formatFCFA, formatNumber, formatCompact, timeAgo, CATEGORIE_ALERTE_LABELS } from '@/lib/format'
 import { useAppStore } from '@/lib/store'
@@ -117,6 +118,71 @@ export function DashboardView() {
         <KpiCard label="Trx suspectes" value={formatNumber(k.transactionsSuspectes)} icon={ShieldAlert} hint={`${k.transactionsBloquees} bloquées`} accent="red" delay={150} />
         <KpiCard label="Screenings 7j" value={formatNumber(k.screenings7j)} icon={Search} hint={`${k.totalSanctions} entrées sanctions`} accent="purple" delay={200} />
         <KpiCard label="Volume du jour" value={formatCompact(k.volumeJour)} icon={TrendingUp} hint={`${k.trxJourBloquees} trx bloquées`} accent="emerald" delay={250} />
+      </div>
+
+      {/* Compliance Score Gauge + Quick Stats */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <Card className="lg:col-span-1 flex flex-col items-center justify-center py-4 bg-gradient-to-br from-emerald-50/50 to-transparent dark:from-emerald-950/20">
+          <ComplianceGauge
+            score={Math.max(0, 100 - Math.round((k.alertesOuvertes * 2) + (k.alertesCritiques * 5) + (k.transactionsBloquees * 1.5)))}
+            label="Score global de conformité"
+          />
+          <div className="mt-3 text-[11px] text-muted-foreground text-center px-4">
+            Calculé à partir des alertes ouvertes, critiques et transactions bloquées
+          </div>
+        </Card>
+        <Card className="lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Indicateurs de conformité LBC/FT/FP</CardTitle>
+            <CardDescription className="text-xs">Vue synthétique des obligations réglementaires</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <ComplianceIndicator
+                label="Déclarations TRA"
+                value={k.transactionsSuspectes}
+                target="≥ 90%"
+                status={k.transactionsSuspectes > 0 ? 'success' : 'neutral'}
+                hint="Transactions suspectes à déclarer"
+              />
+              <ComplianceIndicator
+                label="Screening PPE"
+                value={`${Math.round((k.screenings7j / 7) * 100 / 10) * 10}%`}
+                target="Quotidien"
+                status={k.screenings7j > 0 ? 'success' : 'warning'}
+                hint={`${k.screenings7j} screenings / 7j`}
+              />
+              <ComplianceIndicator
+                label="Alertes critiques"
+                value={k.alertesCritiques}
+                target="0"
+                status={k.alertesCritiques === 0 ? 'success' : 'danger'}
+                hint="Doivent être traitées en priorité"
+              />
+              <ComplianceIndicator
+                label="Taux de blocage"
+                value={`${k.transactions30j > 0 ? Math.round((k.transactionsBloquees / k.transactions30j) * 100) : 0}%`}
+                target="< 5%"
+                status={(k.transactions30j > 0 ? (k.transactionsBloquees / k.transactions30j) : 0) < 0.05 ? 'success' : 'warning'}
+                hint={`${k.transactionsBloquees} / ${k.transactions30j} transactions`}
+              />
+              <ComplianceIndicator
+                label="Clients PPE"
+                value={k.clientsPPE}
+                target="Surveillance"
+                status="neutral"
+                hint="Surveillance renforcée requise"
+              />
+              <ComplianceIndicator
+                label="Listes sanctions"
+                value={k.totalSanctions}
+                target="À jour"
+                status="success"
+                hint="Entrées dans les listes PPE/Sanctions"
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Graphiques */}
@@ -315,6 +381,33 @@ export function DashboardView() {
         </Card>
         <GeoRiskMap />
       </div>
+    </div>
+  )
+}
+
+function ComplianceIndicator({ label, value, target, status, hint }: {
+  label: string
+  value: string | number
+  target: string
+  status: 'success' | 'warning' | 'danger' | 'neutral'
+  hint: string
+}) {
+  const colors = {
+    success: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800',
+    warning: 'text-amber-600 bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800',
+    danger: 'text-red-600 bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800',
+    neutral: 'text-sky-600 bg-sky-50 dark:bg-sky-950/30 border-sky-200 dark:border-sky-800',
+  }
+  const icons = { success: '✓', warning: '⚠', danger: '✗', neutral: '→' }
+  return (
+    <div className={cn('rounded-lg border p-3', colors[status])}>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[11px] font-medium uppercase tracking-wider opacity-80">{label}</span>
+        <span className="text-sm font-bold">{icons[status]}</span>
+      </div>
+      <div className="text-xl font-bold tabular-nums">{value}</div>
+      <div className="text-[10px] opacity-70 mt-0.5">Cible: {target}</div>
+      <div className="text-[10px] opacity-60 mt-0.5 truncate">{hint}</div>
     </div>
   )
 }

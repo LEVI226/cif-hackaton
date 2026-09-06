@@ -13,7 +13,7 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import {
   Search, Users, UserPlus, ShieldAlert, CreditCard, Wallet,
-  FileText, Ban, AlertTriangle, Phone, Mail, MapPin,
+  FileText, Ban, AlertTriangle, Phone, Mail, MapPin, Download,
   Briefcase, Calendar, TrendingUp, Eye, Lock, Unlock,
   History, ShieldCheck, FileSearch, ArrowLeftRight, Bell, Globe2
 } from 'lucide-react'
@@ -27,6 +27,8 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AIAnalyse } from '@/components/shared/ai-analyse'
+import { KYCDocument } from '@/components/shared/kyc-document'
+import { RiskEvolutionChart } from '@/components/shared/risk-evolution-chart'
 
 export function ClientsView() {
   const [search, setSearch] = useState('')
@@ -102,6 +104,13 @@ export function ClientsView() {
         </Button>
         <Button onClick={() => setShowCreate(true)} className="h-10 gap-2">
           <UserPlus className="w-4 h-4" /> Nouveau
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => window.open('/api/export?type=clients', '_blank')}
+          className="h-10 gap-2"
+        >
+          <Download className="w-4 h-4" /> Export
         </Button>
       </div>
 
@@ -292,6 +301,7 @@ function ClientDetail({ clientId, onClose }: { clientId: string; onClose: () => 
           <TabsTrigger value="transactions" className="gap-1.5"><ArrowLeftRight className="w-3.5 h-3.5" /> Transactions</TabsTrigger>
           <TabsTrigger value="alertes" className="gap-1.5"><Bell className="w-3.5 h-3.5" /> Alertes</TabsTrigger>
           <TabsTrigger value="risque" className="gap-1.5"><ShieldAlert className="w-3.5 h-3.5" /> Analyse risque</TabsTrigger>
+          <TabsTrigger value="documents" className="gap-1.5"><FileSearch className="w-3.5 h-3.5" /> Documents</TabsTrigger>
           <TabsTrigger value="historique" className="gap-1.5"><History className="w-3.5 h-3.5" /> Historique KYC</TabsTrigger>
         </TabsList>
 
@@ -441,6 +451,7 @@ function ClientDetail({ clientId, onClose }: { clientId: string; onClose: () => 
 
         {/* Analyse risque */}
         <TabsContent value="risque" className="space-y-4">
+          <RiskEvolutionChart clientId={client.id} />
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">Score de risque: {sr.score || 0}/100</CardTitle>
@@ -462,6 +473,36 @@ function ClientDetail({ clientId, onClose }: { clientId: string; onClose: () => 
             </CardContent>
           </Card>
           <AIAnalyse type="client" id={client.id} title="Analyse IA du client" description="Analyse approfondie du profil de risque par intelligence artificielle" />
+        </TabsContent>
+
+        {/* Documents KYC */}
+        <TabsContent value="documents" className="space-y-4">
+          <KYCDocument clientId={client.id} />
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-sm">Documents KYC du client</CardTitle></CardHeader>
+            <CardContent className="pt-2">
+              {client.documents?.length > 0 ? (
+                <div className="space-y-2">
+                  {client.documents.map((doc: any) => (
+                    <div key={doc.id} className="flex items-center gap-3 p-2.5 rounded-lg border">
+                      <FileText className="w-5 h-5 text-muted-foreground" />
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-medium">{doc.nom}</div>
+                        <div className="text-[11px] text-muted-foreground">{doc.type} · {formatDate(doc.dateUpload)}</div>
+                      </div>
+                      <StatutBadge statut={doc.statut} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <FileSearch className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                  <div className="text-sm">Aucun document KYC enregistré</div>
+                  <div className="text-xs mt-1">Utilisez l'outil d'analyse VLM ci-dessus pour télécharger et analyser des documents</div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Historique KYC */}

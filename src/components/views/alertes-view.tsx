@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils'
 import {
   Search, Bell, Filter, AlertTriangle, Ban, CheckCircle2, Clock,
   X, ChevronRight, Eye, ShieldAlert, ShieldX, Zap, TrendingUp,
-  FileText, MessageSquare, ArrowUpCircle
+  FileText, MessageSquare, ArrowUpCircle, Download
 } from 'lucide-react'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
@@ -113,6 +113,9 @@ export function AlertesView() {
             <SelectItem value="CRITIQUE">Critique</SelectItem>
           </SelectContent>
         </Select>
+        <Button variant="outline" onClick={() => window.open('/api/export?type=alertes', '_blank')} className="h-10 gap-2">
+          <Download className="w-4 h-4" /> Export
+        </Button>
       </div>
 
       {/* Liste */}

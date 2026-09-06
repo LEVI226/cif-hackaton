@@ -13,7 +13,7 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import {
   Search, ArrowLeftRight, ArrowUpRight, ArrowDownRight, Filter, Pause, Play,
-  AlertTriangle, Ban, CheckCircle2, Radio, Plus, X, Eye, Globe2, Zap
+  AlertTriangle, Ban, CheckCircle2, Radio, Plus, X, Eye, Globe2, Zap, Download
 } from 'lucide-react'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue
@@ -122,6 +122,9 @@ export function TransactionsView() {
         </Select>
         <Button variant={filtreSuspecte ? 'default' : 'outline'} onClick={() => setFiltreSuspecte(!filtreSuspecte)} className="h-10 gap-2">
           <AlertTriangle className="w-4 h-4" /> Suspectes
+        </Button>
+        <Button variant="outline" onClick={() => window.open('/api/export?type=transactions', '_blank')} className="h-10 gap-2">
+          <Download className="w-4 h-4" /> Export
         </Button>
       </div>
 

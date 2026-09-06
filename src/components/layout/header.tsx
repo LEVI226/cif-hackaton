@@ -23,6 +23,7 @@ const viewTitles: Record<ViewName, { title: string; subtitle: string }> = {
   rapports: { title: 'Rapports de conformité', subtitle: 'Déclarations TRA, SAR et statistiques' },
   calendrier: { title: 'Calendrier réglementaire', subtitle: 'Échéances LBC/FT/FP et obligations BCEAO/GIABA' },
   comparaison: { title: 'Comparaison de clients', subtitle: 'Analyse comparative des profils de risque' },
+  parametres: { title: 'Paramètres système', subtitle: 'Configuration de la plateforme et des seuils de conformité' },
   regles: { title: 'Règles de conformité', subtitle: 'Configuration du moteur de détection' },
   audit: { title: 'Journal d\'audit', subtitle: 'Traçabilité des actions système' },
 }

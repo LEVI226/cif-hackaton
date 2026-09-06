@@ -14,6 +14,7 @@ import { ReglesView } from '@/components/views/regles-view'
 import { AuditView } from '@/components/views/audit-view'
 import { CalendrierView } from '@/components/views/calendrier-view'
 import { ComparaisonView } from '@/components/views/comparaison-view'
+import { ParametresView } from '@/components/views/parametres-view'
 import { useAppStore } from '@/lib/store'
 import { Footer } from '@/components/layout/footer'
 import { RealtimeProvider } from '@/components/realtime-provider'
@@ -52,6 +53,7 @@ export function AppShell() {
                   {view === 'audit' && <AuditView />}
                   {view === 'calendrier' && <CalendrierView />}
                   {view === 'comparaison' && <ComparaisonView />}
+                  {view === 'parametres' && <ParametresView />}
                 </div>
               </main>
             </div>

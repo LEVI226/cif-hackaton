@@ -11,6 +11,7 @@ export type ViewName =
   | 'audit'
   | 'calendrier'
   | 'comparaison'
+  | 'parametres'
 
 interface AppState {
   view: ViewName

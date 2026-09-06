@@ -4,7 +4,7 @@ import { useAppStore, type ViewName } from '@/lib/store'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard, Users, ArrowLeftRight, Bell, Search,
-  FileText, Shield, History, ShieldCheck, ChevronRight, Calendar, GitCompare
+  FileText, Shield, History, ShieldCheck, ChevronRight, Calendar, GitCompare, Settings
 } from 'lucide-react'
 
 const navItems: Array<{ id: ViewName; label: string; icon: any; description: string }> = [
@@ -18,6 +18,7 @@ const navItems: Array<{ id: ViewName; label: string; icon: any; description: str
   { id: 'calendrier', label: 'Calendrier', icon: Calendar, description: 'Échéances réglementaires' },
   { id: 'regles', label: 'Règles', icon: Shield, description: 'Configuration' },
   { id: 'audit', label: 'Audit', icon: History, description: 'Journal d\'audit' },
+  { id: 'parametres', label: 'Paramètres', icon: Settings, description: 'Configuration système' },
 ]
 
 export function Sidebar() {

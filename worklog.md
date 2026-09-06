@@ -7,7 +7,90 @@ Solution numérique pour la conformité Lutte contre le Blanchiment de Capitaux,
 
 ---
 
-## Round 8 - Dashboard Hero, Activity Feed & Styling
+## Round 9 - Settings View, Enhanced Footer & Styling
+
+### Task ID: qa-1 to style-2
+Agent: Cron Review Agent (Z.ai Code)
+Task: QA testing, settings view, enhanced footer, styling improvements
+
+### Current Project Status:
+- Application stable with 11 functional modules (added Parametres)
+- All 15 API endpoints return HTTP 200
+- Dev server runs on port 3000, alert WebSocket service on port 3003
+- Lint passes with 0 errors (1 inoffensive warning)
+
+### Work Log:
+
+**New Feature: Settings/Parametres View (11th module)**
+- Created `ParametresView` component with 4 tabs:
+  1. **Seuils & Règles** - Editable compliance thresholds (5 parameters):
+     - Seuil déclaration TRA (5,000,000 FCFA)
+     - Seuil blocage automatique (10,000,000 FCFA)
+     - Seuil revue solde global (20,000,000 FCFA)
+     - Période détection structuration (24h)
+     - Nombre max transactions/jour (5)
+     - Save/Cancel buttons with pending changes counter
+     - Rules list with toggle switches (activate/deactivate)
+  2. **Institution** - Editable institution info:
+     - Nom, IFU, Immatriculation, N° IMF BCEAO
+     - Adresse siège, Téléphone, Email, Site web, Capital social
+  3. **Notifications** - 6 notification preferences with toggles:
+     - Alertes critiques temps réel, Transactions suspectes
+     - Échéances réglementaires, Nouveaux clients PPE
+     - Rapports hebdomadaires, Mises à jour listes sanctions
+  4. **Sécurité** - Security settings:
+     - 2FA status, Session duration, Audit logging, Data encryption
+- System info cards (6): Application, DB, Framework, WebSocket, Timezone, Region
+- Added to sidebar with Settings icon
+- Added to app-shell view routing
+- Added to header titles
+- Integrated with existing /api/parametres and /api/regles endpoints
+
+**Enhanced Footer with Quick Links and System Status**
+- Redesigned footer with 3 rows:
+  1. Quick links row - 8 clickable navigation shortcuts (Dashboard, Clients, Transactions, Alertes, Screening, Rapports, Calendrier, Paramètres)
+  2. System status indicators - API, DB, WebSocket with animated pulse dots
+  3. Main info row - CIF Sentinel, DigiCoop-WA+, version, credits
+- Quick links navigate to respective views via Zustand store
+- System status indicators with emerald pulse animation
+- Improved visual hierarchy and information density
+
+**Styling Improvements:**
+- Settings view with tabbed interface matching existing design system
+- Editable input fields with proper labels and descriptions
+- Toggle switches with active/inactive state labels
+- System info cards with hover-lift effect
+- Footer quick links with hover states
+- Animated status indicators (pulse dots)
+- Consistent icon usage (Settings, Shield, Bell, Building2, KeyRound)
+
+### Verification Results:
+- **All 15 API endpoints**: HTTP 200 ✓
+- **Settings view**: 4 tabs with editable thresholds, institution info, notifications, security ✓
+- **Footer**: Quick links + system status indicators rendering ✓
+- **Dev log**: No errors ✓
+- **Lint**: 0 errors, 1 inoffensive warning ✓
+- **Both services**: Dev (3000) + Alert WebSocket (3003) running ✓
+
+### Stage Summary:
+- 1 new feature (settings/parametres view - 11th module)
+- 1 enhanced component (footer with quick links + system status)
+- 4-tab settings interface: Seuils & Règles, Institution, Notifications, Sécurité
+- Editable compliance thresholds with save/cancel
+- Toggle switches for rules and notifications
+- Footer with 8 quick navigation links and 3 system status indicators
+- All 15 APIs verified working
+
+### Unresolved issues / Next steps:
+- Stale browser console hydration warning (cosmetic, app works correctly)
+- Could add PDF report generation
+- Could enhance empty states across all views
+- Could add batch document processing
+- Could add user management module
+
+---
+
+## Round 8 - Dashboard Hero, Activity Feed & Styling (Previous)
 
 ### Task ID: qa-1 to style-2
 Agent: Cron Review Agent (Z.ai Code)

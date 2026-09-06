@@ -7,7 +7,85 @@ Solution numérique pour la conformité Lutte contre le Blanchiment de Capitaux,
 
 ---
 
-## Round 10 - Batch Screening, Compliance Widgets & Donut Charts
+## Round 11 - Transaction Flow, Empty States & Shimmer Skeletons
+
+### Task ID: qa-1 to style-2
+Agent: Cron Review Agent (Z.ai Code)
+Task: QA testing, transaction flow diagram, empty states, styling improvements
+
+### Current Project Status:
+- Application stable with 11 functional modules
+- All 16 API endpoints return HTTP 200
+- Dev server runs on port 3000, alert WebSocket service on port 3003
+- Lint passes with 0 errors (1 inoffensive warning)
+
+### Work Log:
+
+**New Feature: Transaction Flow Diagram**
+- Created `TransactionFlow` component with Sankey-style visualization:
+  - Flow bars per transaction type (Dépôt, Retrait, Virement, Change, Transfert)
+  - Entrée (emerald) and Sortie (red) bars with gradient fills
+  - Width proportional to volume (max flow normalization)
+  - Percentage of total displayed
+  - Animated bars with 700ms transition
+  - Color-coded by type (5 distinct colors)
+  - Each type shows: count badge, % of total, entrée/sortie amounts
+  - Canal distribution grid (4 canaux: AGENCE, MOBILE, INTERNET, ATM)
+    - Canal icons (Building2, Smartphone, Wifi, Wallet)
+    - Count and percentage per canal
+  - Summary cards: total entrées vs total sorties
+- Uses existing `/api/dashboard/widgets` endpoint (flowByType + canalDist data)
+- Integrated into dashboard in 2-column grid with RiskHeatmap
+
+**New Feature: Enhanced Empty States**
+- Created reusable `EmptyState` component:
+  - 4 variants: default, search (sky), error (red), success (emerald)
+  - 3 sizes: sm, md, lg
+  - Icon with blur glow effect
+  - Title + optional description
+  - Optional action button
+  - Dashed border with variant-specific background
+- Replaced alertes view empty state with `EmptyState` (success variant)
+- Updated alertes loading skeleton to use `skeleton-shimmer` class
+- Updated transactions view loading skeleton to use `skeleton-shimmer`
+
+**Styling Improvements:**
+- Shimmer skeleton loading: Replaced `bg-muted animate-pulse` with `skeleton-shimmer` class
+  - Shimmer animation with gradient sweep effect
+  - Works in both light and dark themes
+- Dashboard reorganized: Transaction Flow + Risk Heatmap in 2-column grid, Activity Feed full width below
+- Empty states with dashed borders, glow icons, variant colors
+- Flow bars with gradient fills and animated width transitions
+- Canal distribution with icon + count + percentage
+
+### Verification Results:
+- **All 16 API endpoints**: HTTP 200 ✓
+- **Dashboard**: Transaction Flow, Risk Distribution donut, Risk Heatmap, Activity Feed all rendering ✓
+- **Empty states**: Alertes view shows success empty state when no alerts ✓
+- **Shimmer skeletons**: Loading states use shimmer animation ✓
+- **Dev log**: No errors ✓
+- **Lint**: 0 errors, 1 inoffensive warning ✓
+- **Both services**: Dev (3000) + Alert WebSocket (3003) running ✓
+
+### Stage Summary:
+- 1 new feature (transaction flow diagram)
+- 1 new component (EmptyState - reusable)
+- 2 new components (TransactionFlow, EmptyState)
+- Dashboard reorganized with Transaction Flow + Heatmap grid
+- Shimmer skeleton loading across views
+- Enhanced empty states with illustrations and actions
+- All 16 APIs verified working
+
+### Unresolved issues / Next steps:
+- Stale browser console hydration warning (cosmetic, app works correctly)
+- Could add PDF report generation
+- Could add user roles/permissions management
+- Could add transaction flow Sankey diagram (more advanced)
+- Could add compliance deadline reminder notifications
+
+---
+
+## Round 10 - Batch Screening, Compliance Widgets & Donut Charts (Previous)
 
 ### Task ID: qa-1 to style-2
 Agent: Cron Review Agent (Z.ai Code)

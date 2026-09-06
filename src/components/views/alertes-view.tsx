@@ -27,6 +27,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AIAnalyse } from '@/components/shared/ai-analyse'
 import { AlertStats } from '@/components/shared/alert-stats'
+import { EmptyState } from '@/components/shared/empty-state'
 
 export function AlertesView() {
   const [search, setSearch] = useState('')
@@ -125,12 +126,15 @@ export function AlertesView() {
       {/* Liste */}
       <div className="space-y-2">
         {isLoading ? (
-          Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-24 rounded-xl bg-muted animate-pulse" />)
+          Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-24 rounded-xl skeleton-shimmer" />)
         ) : alertes.length === 0 ? (
-          <Card><CardContent className="py-12 text-center text-muted-foreground">
-            <CheckCircle2 className="w-12 h-12 mx-auto mb-2 text-emerald-500" />
-            <div className="font-medium">Aucune alerte dans cette catégorie</div>
-          </CardContent></Card>
+          <EmptyState
+            icon={CheckCircle2}
+            title="Aucune alerte dans cette catégorie"
+            description="Toutes les alertes ont été traitées ou aucune ne correspond aux filtres actuels."
+            variant="success"
+            size="lg"
+          />
         ) : (
           alertes.map((a: any) => (
             <Card

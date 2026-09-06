@@ -148,7 +148,7 @@ export function TransactionsView() {
               <tbody className="divide-y">
                 {isLoading ? (
                   Array.from({ length: 10 }).map((_, i) => (
-                    <tr key={i}><td colSpan={7} className="px-4 py-3"><div className="h-8 bg-muted animate-pulse rounded" /></td></tr>
+                    <tr key={i}><td colSpan={7} className="px-4 py-3"><div className="h-8 skeleton-shimmer rounded" /></td></tr>
                   ))
                 ) : transactions.length === 0 ? (
                   <tr><td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">Aucune transaction</td></tr>

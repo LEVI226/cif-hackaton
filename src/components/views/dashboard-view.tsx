@@ -12,6 +12,7 @@ import { QuickActionsPanel } from '@/components/shared/quick-actions-panel'
 import { DashboardHero } from '@/components/shared/dashboard-hero'
 import { ActivityFeed } from '@/components/shared/activity-feed'
 import { ComplianceWidgets } from '@/components/shared/compliance-widgets'
+import { TransactionFlow } from '@/components/shared/transaction-flow'
 import { useRealtime } from '@/hooks/use-realtime'
 import { formatFCFA, formatNumber, formatCompact, timeAgo, CATEGORIE_ALERTE_LABELS } from '@/lib/format'
 import { useAppStore } from '@/lib/store'
@@ -397,11 +398,14 @@ export function DashboardView() {
         <GeoRiskMap />
       </div>
 
-      {/* Risk Heatmap + Activity Feed */}
+      {/* Transaction Flow + Risk Heatmap */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <TransactionFlow />
         <RiskHeatmap />
-        <ActivityFeed />
       </div>
+
+      {/* Activity Feed */}
+      <ActivityFeed />
     </div>
   )
 }

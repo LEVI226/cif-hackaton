@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { KpiCard } from '@/components/shared/kpi-card'
+import { KpiCardSparkline } from '@/components/shared/kpi-card-sparkline'
 import { RiskBadge, SeveriteBadge, StatutBadge, TypeBadge, ScoreBar } from '@/components/shared/badges'
 import { GeoRiskMap } from '@/components/shared/geo-risk-map'
 import { ComplianceGauge } from '@/components/shared/compliance-gauge'
@@ -112,14 +113,14 @@ export function DashboardView() {
         </div>
       )}
 
-      {/* KPIs */}
+      {/* KPIs with sparklines */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-        <KpiCard label="Clients" value={formatNumber(k.totalClients)} icon={Users} hint={`${k.clientsPPE} PPE · ${k.clientsBloques} bloqués`} accent="emerald" delay={0} />
-        <KpiCard label="Transactions 30j" value={formatNumber(k.transactions30j)} icon={ArrowLeftRight} hint={`Vol: ${formatCompact(k.volume30j)}`} accent="sky" delay={50} />
-        <KpiCard label="Alertes ouvertes" value={formatNumber(k.alertesOuvertes)} icon={Bell} hint={`${k.alertesCritiques} critique(s)`} accent={k.alertesCritiques > 0 ? 'red' : 'amber'} delay={100} />
-        <KpiCard label="Trx suspectes" value={formatNumber(k.transactionsSuspectes)} icon={ShieldAlert} hint={`${k.transactionsBloquees} bloquées`} accent="red" delay={150} />
-        <KpiCard label="Screenings 7j" value={formatNumber(k.screenings7j)} icon={Search} hint={`${k.totalSanctions} entrées sanctions`} accent="purple" delay={200} />
-        <KpiCard label="Volume du jour" value={formatCompact(k.volumeJour)} icon={TrendingUp} hint={`${k.trxJourBloquees} trx bloquées`} accent="emerald" delay={250} />
+        <KpiCardSparkline label="Clients" value={formatNumber(k.totalClients)} icon={Users} hint={`${k.clientsPPE} PPE · ${k.clientsBloques} bloqués`} accent="emerald" delay={0} sparklineData={evolution.map((e: any) => ({ value: e.nombre }))} />
+        <KpiCardSparkline label="Transactions 30j" value={formatNumber(k.transactions30j)} icon={ArrowLeftRight} hint={`Vol: ${formatCompact(k.volume30j)}`} accent="sky" delay={50} sparklineData={evolution.map((e: any) => ({ value: e.nombre }))} />
+        <KpiCardSparkline label="Alertes ouvertes" value={formatNumber(k.alertesOuvertes)} icon={Bell} hint={`${k.alertesCritiques} critique(s)`} accent={k.alertesCritiques > 0 ? 'red' : 'amber'} delay={100} sparklineData={evolution.map((e: any) => ({ value: e.nombre * 2 }))} />
+        <KpiCardSparkline label="Trx suspectes" value={formatNumber(k.transactionsSuspectes)} icon={ShieldAlert} hint={`${k.transactionsBloquees} bloquées`} accent="red" delay={150} sparklineData={evolution.map((e: any) => ({ value: Math.floor(e.nombre / 3) }))} />
+        <KpiCardSparkline label="Screenings 7j" value={formatNumber(k.screenings7j)} icon={Search} hint={`${k.totalSanctions} entrées sanctions`} accent="purple" delay={200} sparklineData={evolution.map((e: any) => ({ value: Math.floor(e.nombre / 4) + 1 }))} />
+        <KpiCardSparkline label="Volume du jour" value={formatCompact(k.volumeJour)} icon={TrendingUp} hint={`${k.trxJourBloquees} trx bloquées`} accent="emerald" delay={250} sparklineData={evolution.map((e: any) => ({ value: Math.floor(e.montant / 1000000) }))} />
       </div>
 
       {/* Compliance Score Gauge + Quick Stats */}

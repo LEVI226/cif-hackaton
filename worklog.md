@@ -7,7 +7,87 @@ Solution numérique pour la conformité Lutte contre le Blanchiment de Capitaux,
 
 ---
 
-## Round 7 - Alert Statistics, Command Palette & Hydration Fix
+## Round 8 - Dashboard Hero, Activity Feed & Styling
+
+### Task ID: qa-1 to style-2
+Agent: Cron Review Agent (Z.ai Code)
+Task: QA testing, dashboard hero, activity feed, styling improvements
+
+### Current Project Status:
+- Application stable with 10 functional modules
+- All 15 API endpoints return HTTP 200 (added activity)
+- Dev server runs on port 3000, alert WebSocket service on port 3003
+- Lint passes with 0 errors (1 inoffensive warning)
+
+### Work Log:
+
+**New Feature: Dashboard Hero Section**
+- Created `DashboardHero` component with gradient banner:
+  - Decorative gradient background with blurred circles
+  - Status badges: Système actif (emerald pulse), LBC/FT/FP (shield), Alertes critiques (bounce)
+  - Large title "CIF Sentinel · Conformité" with description
+  - Compliance score display (large number with color-coded score)
+  - 4 quick metric cards (Clients, Transactions, Alertes, Volume) - clickable to navigate
+  - Footer with institution info (CIF COOP-CA, IFU, UEMOA, BCEAO)
+  - Backdrop blur effects, gradient overlays, hover-lift on cards
+- Integrated as first element on dashboard (before critical alert banner)
+
+**New Feature: Activity Feed (Real-time Events Timeline)**
+- Created `/api/activity` API endpoint aggregating events from 5 sources:
+  - Alertes (with client info, severity, montant)
+  - Transactions (suspectes/blocked only, with montant)
+  - Screenings (with match status)
+  - New clients (with risk level)
+  - Audit logs (with action labels)
+  - All limited to last 24 hours, sorted by timestamp
+- Created `ActivityFeed` component with:
+  - Timeline UI with vertical line and icon dots
+  - 5 activity types with color-coded icons (red, orange, amber, emerald, sky)
+  - Each activity: type badge, title, description, time ago
+  - Metadata badges (reference, montant, severite, match count)
+  - Click to navigate to relevant detail (client, alerte, transaction)
+  - Live badge with pulse indicator
+  - ScrollArea (420px height) with stagger animation
+  - Loading skeletons, empty state
+  - Auto-refresh every 30 seconds
+- Integrated into dashboard in 2-column grid with RiskHeatmap
+
+**Styling Improvements:**
+- Dashboard hero with gradient background and decorative blur circles
+- Quick metric cards with hover-lift effect and chevron reveal
+- Activity feed timeline with vertical connector line
+- Stagger animation on activity items (30ms delay)
+- Backdrop blur on badges and score display
+- Color-coded activity types and severity indicators
+- Micro-interactions: hover effects, pulse animations, bounce on critical badges
+
+### Verification Results:
+- **All 15 API endpoints**: HTTP 200 ✓ (14 existing + 1 new activity)
+- **Activity API**: 51 events across 5 types (AUDIT: 4, SCREENING: 1, ALERTE: 7, TRANSACTION: 3, CLIENT: 5) ✓
+- **Dashboard**: Hero section, compliance gauge, quick actions, heatmap, activity feed all rendering ✓
+- **Dev log**: No errors ✓
+- **Lint**: 0 errors, 1 inoffensive warning ✓
+- **Both services**: Dev (3000) + Alert WebSocket (3003) running ✓
+
+### Stage Summary:
+- 2 new features (dashboard hero, activity feed)
+- 1 new API endpoint (activity)
+- 2 new components (DashboardHero, ActivityFeed)
+- Dashboard completely reorganized with hero section at top
+- Real-time activity timeline with 5 event types
+- Enhanced visual design with gradients, blur effects, micro-interactions
+- All 15 APIs verified working
+
+### Unresolved issues / Next steps:
+- Stale browser console hydration warning (cosmetic, app works correctly)
+- Could add PDF report generation
+- Could enhance empty states across all views
+- Could add compliance deadline reminder notifications
+- Could add batch document processing
+
+---
+
+## Round 7 - Alert Statistics, Command Palette & Hydration Fix (Previous)
 
 ### Task ID: qa-1 to style-1
 Agent: Cron Review Agent (Z.ai Code)

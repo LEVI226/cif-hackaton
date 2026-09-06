@@ -9,6 +9,8 @@ import { GeoRiskMap } from '@/components/shared/geo-risk-map'
 import { ComplianceGauge } from '@/components/shared/compliance-gauge'
 import { RiskHeatmap } from '@/components/shared/risk-heatmap'
 import { QuickActionsPanel } from '@/components/shared/quick-actions-panel'
+import { DashboardHero } from '@/components/shared/dashboard-hero'
+import { ActivityFeed } from '@/components/shared/activity-feed'
 import { useRealtime } from '@/hooks/use-realtime'
 import { formatFCFA, formatNumber, formatCompact, timeAgo, CATEGORIE_ALERTE_LABELS } from '@/lib/format'
 import { useAppStore } from '@/lib/store'
@@ -69,6 +71,9 @@ export function DashboardView() {
 
   return (
     <div className="space-y-5">
+      {/* Hero Section */}
+      <DashboardHero />
+
       {/* Bandeau d'alerte critique */}
       {k.alertesCritiques > 0 && (
         <div className="rounded-xl border border-red-200 bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/40 dark:to-orange-950/30 p-4 flex items-center gap-3 animate-slide-in">
@@ -388,8 +393,11 @@ export function DashboardView() {
         <GeoRiskMap />
       </div>
 
-      {/* Risk Heatmap */}
-      <RiskHeatmap />
+      {/* Risk Heatmap + Activity Feed */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <RiskHeatmap />
+        <ActivityFeed />
+      </div>
     </div>
   )
 }

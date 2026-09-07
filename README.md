@@ -43,10 +43,21 @@ Pour le hackathon, le chemin principal est : `backend/` + `frontend/`.
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
 cd backend
+..\.venv\Scripts\python.exe seed_corpus_demo.py
 ..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
 ```
 
 Swagger : `http://127.0.0.1:8000/docs`
+
+L'etape `seed_corpus_demo.py` n'est pas optionnelle : la base SQLite n'est pas
+versionnee, un depot fraichement clone demarre donc a vide. Le jeu de donnees
+qu'elle importe (corpus CIF synthetique) est **inclus dans le depot**
+(`backend/data/dataset_demo/`), il n'y a rien d'autre a telecharger.
+
+Apres cette commande, 15 comptes de demonstration existent, tous avec le mot de
+passe `Demo2026!` : `guichet_dori`, `conformite_dori`, `superviseur_dori` (idem
+pour banfora / ouaga / cotonou), plus `conformite_reseau`, `auditeur_reseau` et
+`admin_reseau`.
 
 ## Tester
 
@@ -54,7 +65,8 @@ Swagger : `http://127.0.0.1:8000/docs`
 .\.venv\Scripts\python.exe -m pytest backend\tests
 ```
 
-Etat valide le 2026-09-07 : 56 tests backend passent.
+Etat valide le 2026-09-07 : 73 tests backend passent, dont 13 sur la seule
+visibilite differenciee par role (`backend/tests/test_visibility.py`).
 
 ## Documentation utile
 

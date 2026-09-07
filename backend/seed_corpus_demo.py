@@ -6,8 +6,11 @@ conformement au TDR ("demonstration live... pas seulement des diapositives").
 Usage :
     python seed_corpus_demo.py [chemin_vers_dataset_demo]
 
-Par defaut, lit depuis le corpus prepare pour le hackathon :
-    C:/Users/ulric/Documents/cifHackathon/corpusCIF/topic1_lbc_ft/05_jeu_donnees_synthetique/dataset_demo
+Par defaut, lit le jeu de donnees embarque dans le depot (backend/data/dataset_demo),
+copie du corpus CIF "topic1_lbc_ft / 05_jeu_donnees_synthetique". Il est versionne
+volontairement (27 Ko) : sans lui, un poste qui clone le depot obtiendrait une base
+vide et ne pourrait pas rejouer la demonstration. Un chemin peut etre passe en
+argument pour pointer vers une autre extraction du corpus.
 """
 from __future__ import annotations
 
@@ -27,9 +30,9 @@ from app.services.fid_allocator import allocate_fid
 from app.services.screening_service import run_screening
 from app.services.security import Role, hash_password
 
-DEFAULT_DATASET_DIR = Path(
-    r"C:/Users/ulric/Documents/cifHackathon/corpusCIF/topic1_lbc_ft/05_jeu_donnees_synthetique/dataset_demo"
-)
+# Resolu par rapport a CE fichier, pas au repertoire courant : le script marche
+# donc quel que soit l'endroit d'ou on le lance, et sur n'importe quelle machine.
+DEFAULT_DATASET_DIR = Path(__file__).resolve().parent / "data" / "dataset_demo"
 
 # caisse_id (dataset) -> (code SFD 4 chiffres, zone-appropriate defaults deja
 # dans caisses.csv, mais le code lui-meme n'existe pas dans le corpus - on

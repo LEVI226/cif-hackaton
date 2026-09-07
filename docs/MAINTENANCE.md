@@ -49,10 +49,18 @@ cd backend
 
 Importe le jeu de donnees synthetique du corpus CIF (4 caisses, 8 clients dont
 un cas multi-caisse, mandats, listes de surveillance) et filtre automatiquement
-chaque client a l'import pour que les alertes existent des le demarrage. Sans
-argument, lit depuis `C:\Users\ulric\Documents\cifHackathon\corpusCIF\...` - si
-ce chemin n'existe pas sur la machine de demo, passer le dossier
-`dataset_demo/` en argument, ou copier ces CSV dans le depot.
+chaque client a l'import pour que les alertes existent des le demarrage.
+
+**Aucun argument n'est necessaire** : les CSV sont versionnes dans le depot
+(`backend/data/dataset_demo/`, 27 Ko) et le chemin est resolu par rapport au
+script lui-meme. N'importe quel poste qui clone le depot obtient donc exactement
+la meme base, sans dependre d'un dossier local. Un chemin peut etre passe en
+argument pour pointer vers une autre extraction du corpus.
+
+Valeurs attendues apres import, a verifier avant une demonstration : KABORE
+AMADOU (`FID-BF-0100-00000001-3`) a **425 000 FCFA** a Dori et **980 000 FCFA** a
+Banfora, soit **1 405 000 FCFA** consolides ; 8 clients, 4 alertes, 0 transaction
+(les operations sont volontairement rejouees en direct pendant la demo).
 
 15 comptes de demo sont crees, mot de passe unique `Demo2026!` (`guichet_dori`,
 `conformite_dori`, `superviseur_dori`, idem pour banfora/ouaga/cotonou, plus

@@ -90,10 +90,10 @@ export function Layout() {
   const openAlerts = useOpenAlertCount(showsAlerts);
 
   // Les sous-routes (ex: /clients/FID-...) n'ont pas d'entree de menu : on leur
-  // donne quand meme un titre parlant plutot que de retomber sur "Sentinel".
+  // donne quand meme un titre parlant plutot que de retomber sur le nom du produit.
   const current = items.find((item) => item.to === location.pathname);
   const isFiche = location.pathname.startsWith("/clients/");
-  const title = current?.label ?? (isFiche ? "Fiche client" : "Sentinel");
+  const title = current?.label ?? (isFiche ? "Fiche client" : "SentinelleCoop");
   const subtitle =
     current?.sub ?? (isFiche ? "Identite, comptes et mouvements" : "Filtrage LBC/FT/FP");
 
@@ -108,7 +108,7 @@ export function Layout() {
             <IconShield size={20} />
           </span>
           <span>
-            <span className="brand-name">Sentinel</span>
+            <span className="brand-name">SentinelleCoop</span>
             <br />
             <span className="brand-sub">Conformite LBC/FT/FP</span>
           </span>

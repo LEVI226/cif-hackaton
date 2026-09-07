@@ -38,7 +38,7 @@ export function LoginScreen() {
   return (
     <div style={{ maxWidth: 360, margin: "80px auto" }} className="stack">
       <div>
-        <h1>Sentinel</h1>
+        <h1>SentinelleCoop</h1>
         <p className="muted">Filtrage LBC/FT/PPE — reseau CIF</p>
       </div>
       <form className="card stack" onSubmit={onSubmit}>

@@ -33,7 +33,7 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(
-    title="Sentinel API",
+    title="SentinelleCoop API",
     description="Filtrage LBC/FT/PPE pour les SFD membres du reseau CIF - DigiCoop-WA+ 2026",
     version="0.1.0",
     lifespan=lifespan,

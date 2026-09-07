@@ -124,7 +124,7 @@ export function DashboardScreen() {
             </div>
 
             <h2>
-              <span className="gradient-text">Sentinel</span>{" "}
+              <span className="gradient-text">SentinelleCoop</span>{" "}
               <span style={{ fontWeight: 400, color: "var(--muted)" }}>· conformite</span>
             </h2>
             <p className="muted" style={{ maxWidth: 560, marginTop: 6 }}>

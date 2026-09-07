@@ -70,6 +70,10 @@ export function roleLabel(role: Role): string {
       return "Agent conformite";
     case "SUPERVISEUR_SFD":
       return "Superviseur SFD";
+    case "CONFORMITE_RESEAU":
+      return "Conformite reseau";
+    case "AUDITEUR":
+      return "Auditeur interne";
     case "ADMIN_RESEAU":
       return "Admin reseau CIF";
   }

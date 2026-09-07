@@ -14,7 +14,11 @@ API FastAPI. C'est la source de verite metier pour le TDR.
 - `app/routers/` : endpoints REST.
 - `app/services/` : logique metier reutilisable.
 - `tests/` : tests automatises backend.
-- `seed_dev.py` : donnees de demonstration.
+- `seed_corpus_demo.py` : **jeu de donnees de demo recommande** - importe le
+  corpus CIF reel (caisses, clients multi-comptes, mandats, listes de
+  surveillance) et filtre chaque client a l'import. Voir `docs/MAINTENANCE.md`.
+- `seed_dev.py` : jeu de donnees minimal (une SFD, un compte par role) pour un
+  test rapide sans dependre du corpus.
 
 ### `frontend/`
 

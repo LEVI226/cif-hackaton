@@ -31,3 +31,16 @@ def find_valid_mandat(
     if montant > float(mandat.plafond):
         return None
     return mandat
+
+
+def clients_lies_au_mandataire(db: Session, mandataire_piece: str) -> set[str]:
+    """R011 : un mandataire rattache a plusieurs clients differents est un motif
+    d'alerte informative (un meme intermediaire peut servir a masquer plusieurs
+    beneficiaires reels)."""
+    rows = (
+        db.query(Mandat.client_fid)
+        .filter(Mandat.mandataire_piece == mandataire_piece, Mandat.statut == MandatStatut.VALIDE)
+        .distinct()
+        .all()
+    )
+    return {row[0] for row in rows}

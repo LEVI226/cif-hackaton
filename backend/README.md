@@ -86,7 +86,12 @@ Etat valide le 2026-09-07 : 56 tests passent.
 ## Ce qui reste
 
 - Migrations Alembic avant un deploiement partage.
-- Masquage fin des champs sensibles selon role, caisse et statut d'alerte.
+- Ecran frontend dedie pour lister/gerer les mandats (le champ procuration
+  existe sur le formulaire de transaction, pas d'ecran de gestion a part).
+
+Fait depuis (voir `CHANGELOG.md`, entree "soir") : le masquage fin des champs
+sensibles selon role/caisse/statut d'alerte - `app/services/visibility.py`,
+applique a `/clients` (search, fiche, solde-global, mouvements) et `/alerts`.
 
 ## Maintenance
 

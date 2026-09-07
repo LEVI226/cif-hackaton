@@ -32,8 +32,10 @@ def create_account(
     client = db.get(Client, payload.client_fid)
     if client is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Client introuvable")
-    if client.created_by_sfd_id != int(user.sfd_id):
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "Client hors perimetre SFD")
+    # Deliberement PAS de controle "client cree par ma SFD" ici : c'est tout le
+    # point du FID reseau qu'un client identifie a Dori puisse ouvrir un second
+    # compte a Banfora (cf. TDR "comptes dans plusieurs caisses", scenario de
+    # demo recommande par le corpus CIF). Le controle qui compte est le KYC.
     if piece_expiree(client):
         raise HTTPException(status.HTTP_409_CONFLICT, "Piece d'identite expiree - ouverture compte bloquee")
 

@@ -8,6 +8,8 @@ from app.models.client import Client
 from app.models.mandat import Mandat
 from app.schemas.mandat import MandatCreate, MandatOut
 from app.services.audit import log_action
+from app.services.mandats import clients_lies_au_mandataire
+from app.services.screening_service import open_pattern_alert
 from app.services.security import Role, TokenPayload, require_roles
 
 router = APIRouter(prefix="/mandats", tags=["mandats"])
@@ -41,6 +43,21 @@ def create_mandat(
         {"client_fid": payload.client_fid, "plafond": payload.plafond},
         sfd_id=client.created_by_sfd_id,
     )
+
+    # R011 : ce mandataire est-il deja lie a un AUTRE client ? Un meme
+    # intermediaire pour plusieurs clients differents est un motif d'alerte
+    # informative, pas bloquante (cf. catalogue_regles_alertes_topic1.csv).
+    autres_clients = clients_lies_au_mandataire(db, payload.mandataire_piece) - {payload.client_fid}
+    if autres_clients:
+        open_pattern_alert(
+            db,
+            [
+                f"mandataire '{payload.mandataire_nom}' ({payload.mandataire_piece}) "
+                f"deja lie a {len(autres_clients)} autre(s) client(s) du reseau"
+            ],
+            client_fid=payload.client_fid,
+        )
+
     db.commit()
     db.refresh(mandat)
     return mandat

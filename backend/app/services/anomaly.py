@@ -68,6 +68,21 @@ def detect_anomalies(
                 f"recente de {moyenne:,.0f} FCFA sur ce compte".replace(",", " ")
             )
 
+    # R005/R006 : seuil PAR CAISSE, pas un seuil global unique - une caisse en
+    # zone rouge (Dori) doit alerter plus tot qu'une caisse en zone verte
+    # (Banfora), cf. corpus CIF 09_risque_geographique_et_parametrage_local.md.
+    sfd = account.sfd
+    if type_ == TransactionType.DEPOT and montant > float(sfd.seuil_depot):
+        reasons.append(
+            f"depot au-dessus du seuil local ({sfd.name}, zone {sfd.zone_risque}, "
+            f"seuil {float(sfd.seuil_depot):,.0f} FCFA) - origine des fonds a demander".replace(",", " ")
+        )
+    elif type_ == TransactionType.RETRAIT and montant > float(sfd.seuil_retrait):
+        reasons.append(
+            f"retrait au-dessus du seuil local ({sfd.name}, zone {sfd.zone_risque}, "
+            f"seuil {float(sfd.seuil_retrait):,.0f} FCFA) - motif et justificatif a demander".replace(",", " ")
+        )
+
     return reasons
 
 

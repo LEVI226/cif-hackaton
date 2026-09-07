@@ -6,6 +6,8 @@ export type Role =
   | "AGENT_GUICHET"
   | "AGENT_CONFORMITE"
   | "SUPERVISEUR_SFD"
+  | "CONFORMITE_RESEAU"
+  | "AUDITEUR"
   | "ADMIN_RESEAU";
 
 export interface LoginResponse {
@@ -15,27 +17,95 @@ export interface LoginResponse {
   sfd_id: number | null;
 }
 
-export interface ClientOut {
+// Champs KYC partages entre creation et lecture - calques sur la fiche client
+// papier (cf. backend/app/schemas/client.py::ClientFieldsOptional).
+export interface ClientFields {
+  date_naissance?: string | null;
+  nationalite?: string | null;
+  type_client: "PHYSIQUE" | "MORALE";
+  statut_relation: "MEMBRE" | "CLIENT" | "OCCASIONNEL";
+
+  sexe?: string | null;
+  lieu_naissance?: string | null;
+  situation_matrimoniale?: string | null;
+  nb_personnes_charge?: number | null;
+  nom_pere?: string | null;
+  nom_mere?: string | null;
+
+  type_piece?: string | null;
+  numero_piece?: string | null;
+  date_delivrance_piece?: string | null;
+  date_expiration_piece?: string | null;
+  lieu_delivrance_piece?: string | null;
+  copie_piece_verifiee: boolean;
+
+  telephone?: string | null;
+  email?: string | null;
+  adresse?: string | null;
+  region?: string | null;
+  province?: string | null;
+  commune?: string | null;
+  secteur_quartier?: string | null;
+
+  profession?: string | null;
+  secteur_activite?: string | null;
+  employeur_activite?: string | null;
+  revenu_mensuel_estime?: number | null;
+  autres_revenus?: string | null;
+  patrimoine_estime?: number | null;
+
+  source_fonds?: string | null;
+  destination_fonds?: string | null;
+  frequence_attendue?: string | null;
+
+  est_ppe: boolean;
+  proche_ppe: boolean;
+  zone_haut_risque?: string | null;
+  niveau_risque_initial: "FAIBLE" | "MOYEN" | "ELEVE";
+
+  forme_juridique?: string | null;
+  rccm?: string | null;
+  ifu?: string | null;
+  siege_social?: string | null;
+  representant_legal_nom?: string | null;
+  representant_legal_prenom?: string | null;
+  beneficiaire_effectif_nom?: string | null;
+  beneficiaire_effectif_part?: number | null;
+  beneficiaire_effectif_ppe: boolean;
+
+  external_ids: Record<string, string>;
+}
+
+export interface ClientCreate extends Partial<ClientFields> {
+  nom: string;
+  prenom: string;
+}
+
+export interface ClientOut extends ClientFields {
   fid: string;
   nom: string;
   prenom: string;
-  date_naissance: string | null;
-  nationalite: string | null;
   created_at: string;
+  nom_masque: boolean;
 }
+
+export type Vue = "LOCALE" | "RESEAU";
 
 export interface AccountBalance {
   numero_compte: string;
   sfd_code: string;
   statut: string;
-  solde: number;
+  solde: number | null;
+  visible: boolean;
 }
 
 export interface SoldeGlobalOut {
   fid: string;
   devise: string;
+  vue: Vue;
   solde_total: number;
   comptes: AccountBalance[];
+  comptes_masques: number;
 }
 
 export interface MouvementOut {
@@ -48,10 +118,12 @@ export interface MouvementOut {
 
 export interface ActiviteClientOut {
   fid: string;
+  vue: Vue;
   classification: "HABITUEL" | "OCCASIONNEL";
   nb_operations_recentes: number;
   fenetre_jours: number;
   mouvements: MouvementOut[];
+  mouvements_masques: number;
 }
 
 export type ScreeningDecision = "AUCUN" | "INFORMATIF" | "BLOQUANT";
@@ -78,6 +150,16 @@ export interface AlertOut {
 export type TransactionType = "DEPOT" | "RETRAIT" | "VIREMENT";
 export type TransactionStatus = "EN_ATTENTE" | "VALIDEE" | "BLOQUEE";
 
+export interface TransactionCreate {
+  numero_compte: string;
+  montant: number;
+  type: TransactionType;
+  beneficiaire_nom?: string | null;
+  beneficiaire_compte?: string | null;
+  mandataire_nom?: string | null;
+  mandataire_piece?: string | null;
+}
+
 export interface TransactionOut {
   id: number;
   numero_compte: string;
@@ -87,6 +169,8 @@ export interface TransactionOut {
   statut: TransactionStatus;
   date: string;
   beneficiaire_nom: string | null;
+  mandataire_nom: string | null;
+  mandat_id: number | null;
   alert_reasons: string[];
 }
 
@@ -104,4 +188,43 @@ export interface PPEEntryOut {
   fonction: string;
   pays: string;
   date_maj: string;
+}
+
+export interface MandatCreate {
+  client_fid: string;
+  mandataire_nom: string;
+  mandataire_piece: string;
+  date_debut: string;
+  date_fin: string;
+  plafond: number;
+}
+
+export interface MandatOut {
+  id: number;
+  client_fid: string;
+  mandataire_nom: string;
+  mandataire_piece: string;
+  date_debut: string;
+  date_fin: string;
+  plafond: number;
+  statut: "VALIDE" | "EXPIRE" | "REVOQUE";
+  created_at: string;
+}
+
+export interface AccountCreate {
+  client_fid: string;
+  numero_compte: string;
+  type_compte?: string;
+  solde?: number;
+}
+
+export interface AccountOut {
+  id: number;
+  numero_compte: string;
+  client_fid: string;
+  sfd_id: number;
+  type_compte: string;
+  statut: string;
+  date_ouverture: string;
+  solde: number;
 }

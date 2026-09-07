@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -25,5 +25,13 @@ class SFD(Base):
     # Compteur de sequence pour la generation de FID (cf. app.services.fid) -
     # incremente atomiquement a chaque nouveau client rattache a cette SFD.
     next_client_seq: Mapped[int] = mapped_column(default=1)
+
+    # Parametrage local par zone (regles R005/R006, corpus CIF
+    # 09_risque_geographique_et_parametrage_local.md : Dori zone rouge exige des
+    # seuils plus bas que Banfora zone verte - un seuil global unique manquerait
+    # exactement le cas que le jury veut voir).
+    zone_risque: Mapped[str] = mapped_column(String(16), default="verte")  # rouge | orange | verte
+    seuil_depot: Mapped[float] = mapped_column(Numeric(14, 2), default=1_000_000)
+    seuil_retrait: Mapped[float] = mapped_column(Numeric(14, 2), default=1_000_000)
 
     country: Mapped[Country] = relationship()

@@ -3,8 +3,17 @@ import { roleLabel, useAuth } from "../lib/auth";
 import { SyncIndicator } from "./SyncIndicator";
 
 const NAV_ITEMS: { to: string; label: string; roles: string[] }[] = [
-  { to: "/clients", label: "Clients", roles: ["AGENT_GUICHET", "AGENT_CONFORMITE", "SUPERVISEUR_SFD", "ADMIN_RESEAU"] },
-  { to: "/alertes", label: "Alertes", roles: ["AGENT_CONFORMITE", "SUPERVISEUR_SFD"] },
+  {
+    to: "/clients",
+    label: "Clients",
+    // Deliberement SANS ADMIN_RESEAU : separation des taches, cote backend aussi.
+    roles: ["AGENT_GUICHET", "AGENT_CONFORMITE", "SUPERVISEUR_SFD", "CONFORMITE_RESEAU", "AUDITEUR"],
+  },
+  {
+    to: "/alertes",
+    label: "Alertes",
+    roles: ["AGENT_CONFORMITE", "SUPERVISEUR_SFD", "CONFORMITE_RESEAU", "AUDITEUR"],
+  },
   { to: "/admin", label: "Listes reseau", roles: ["ADMIN_RESEAU"] },
 ];
 

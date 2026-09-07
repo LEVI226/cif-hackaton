@@ -87,6 +87,54 @@ def admin_reseau(db_session):
     return user
 
 
+@pytest.fixture()
+def seeded_sfd_banfora(db_session, seeded_sfd):
+    sfd = SFD(code="0450", name="Caisse Banfora", country_code="BF", next_client_seq=1)
+    db_session.add(sfd)
+    db_session.commit()
+    db_session.refresh(sfd)
+    return sfd
+
+
+@pytest.fixture()
+def agent_guichet_banfora(db_session, seeded_sfd_banfora):
+    user = StaffUser(
+        username="agent_banfora",
+        password_hash=hash_password("motdepasse-test"),
+        role=Role.AGENT_GUICHET,
+        sfd_id=seeded_sfd_banfora.id,
+    )
+    db_session.add(user)
+    db_session.commit()
+    return user
+
+
+@pytest.fixture()
+def conformite_reseau(db_session):
+    user = StaffUser(
+        username="conformite_reseau1",
+        password_hash=hash_password("motdepasse-test"),
+        role=Role.CONFORMITE_RESEAU,
+        sfd_id=None,
+    )
+    db_session.add(user)
+    db_session.commit()
+    return user
+
+
+@pytest.fixture()
+def auditeur(db_session):
+    user = StaffUser(
+        username="auditeur1",
+        password_hash=hash_password("motdepasse-test"),
+        role=Role.AUDITEUR,
+        sfd_id=None,
+    )
+    db_session.add(user)
+    db_session.commit()
+    return user
+
+
 def auth_headers(client: TestClient, username: str, password: str = "motdepasse-test") -> dict:
     response = client.post("/auth/login", json={"username": username, "password": password})
     assert response.status_code == 200, response.text

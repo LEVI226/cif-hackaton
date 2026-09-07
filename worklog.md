@@ -1,5 +1,34 @@
 # CIF Sentinel - Worklog
 
+## Round 12 - Reprise TDR CIF, KYC, procurations et audit
+
+### Task ID: codex-tdr-recovery-2026-09-07
+Agent: Codex
+Task: reprendre la coupure Claude et recentrer cifSentinel sur la Thematique 01 du TDR CIF.
+
+### Work Log:
+
+- Branche les champs KYC/CNIB dans la creation client.
+- Bloque l'ouverture si la piece est expiree ou si une personne morale n'a pas de beneficiaire effectif.
+- Ajoute les mandats/procurations avec controle de validite, statut et plafond.
+- Branche le retrait par procuration dans `POST /transactions`.
+- Alimente `AuditLog` pour creation client, mandat et transaction.
+- Ajoute `GET /audit` pour montrer la tracabilite en demo.
+- Ajoute `POST /accounts` pour rendre la demo Swagger autonome.
+- Ajoute `/sync/push` et `/sync/pull` pour couvrir la contrainte de connectivite limitee.
+- Restreint les lectures locales au perimetre SFD pour les roles locaux.
+- Ajoute `CHANGELOG.md`, `docs/MAINTENANCE.md` et `docs/PROMPTS.md`.
+
+### Verification Results:
+
+- `.\.venv\Scripts\python.exe -m pytest backend\tests`
+- 55 tests passes.
+
+### Next steps:
+
+- Exposer les nouveaux flux dans le frontend : CNIB expiree, mandat, retrait par procuration, audit.
+- Exposer la synchronisation offline dans le frontend si le temps le permet.
+
 ## Problème résolu
 **Thématique 01 - Filtrage des clients LBC/FT/FP** du Hackathon CIF DigiCoop-WA+
 

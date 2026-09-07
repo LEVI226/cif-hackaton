@@ -12,6 +12,7 @@ node_modules
 
 # testing
 /coverage
+.pytest_cache/
 
 # next.js
 /.next/
@@ -19,6 +20,14 @@ node_modules
 
 # production
 /build
+
+# local Python/backend runtime
+.venv/
+__pycache__/
+*.pyc
+sentinel.db
+backend/sentinel.db
+graphify-out/
 
 # misc
 .DS_Store

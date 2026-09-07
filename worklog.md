@@ -4,7 +4,7 @@
 
 ### Task ID: codex-tdr-recovery-2026-09-07
 Agent: Codex
-Task: reprendre la coupure Claude et recentrer cifSentinel sur la Thematique 01 du TDR CIF.
+Task: reprendre la coupure Claude et recentrer SentinelleCoop sur la Thematique 01 du TDR CIF.
 
 ### Work Log:
 

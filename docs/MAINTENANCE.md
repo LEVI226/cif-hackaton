@@ -1,10 +1,10 @@
-# Guide de maintenance cifSentinel
+# Guide de maintenance SentinelleCoop
 
 Ce guide explique comment relancer, tester et reparer le projet sans aide IA.
 
 ## Probleme resolu
 
-cifSentinel repond a la Thematique 01 du TDR CIF : aider les institutions de
+SentinelleCoop repond a la Thematique 01 du TDR CIF : aider les institutions de
 microfinance a filtrer les clients et transactions LBC/FT/FP, detecter les
 operations suspectes, produire des alertes bloquantes ou informatives, et suivre
 un client sur plusieurs comptes/caisses avec peu de moyens informatiques.

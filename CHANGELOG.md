@@ -1,6 +1,6 @@
 # Changelog
 
-Tous les changements notables de cifSentinel sont consignes ici pour que l'equipe
+Tous les changements notables de SentinelleCoop sont consignes ici pour que l'equipe
 puisse maintenir le projet sans dependre d'une memoire IA. Voir aussi
 `docs/PROMPTS.md` pour le "pourquoi" derriere les choix ci-dessous.
 
@@ -36,7 +36,7 @@ Defaut anterieur a la refonte visuelle, mais fatal en demonstration.
 
 ## 2026-09-07 (soir) - Refonte visuelle, sans toucher au RBAC
 
-L'equipe a compare notre interface a celle d'une autre piste (SentinelleCoop,
+L'equipe a compare notre interface a celle d'une autre piste exploratoire (prototype
 Next.js/shadcn) et a demande le meme niveau de finition. Parti pris : reprendre
 sa **structure** (barre laterale, densite, sparklines, jauge) mais rien de sa
 logique - cette piste-la n'a aucune authentification ni RBAC cable (`next-auth`
@@ -278,7 +278,7 @@ explicitement citee comme un point souleve par le jury.
   directement (le champ existe sur la transaction, pas d'ecran dedie).
 - Pas de test automatise frontend (verification manuelle via Playwright
   seulement, scripts non conserves dans le repo).
-- Deux projets distincts existent pour la thematique 01 : `cifSentinel` (ce
+- Deux projets distincts existent pour la thematique 01 : `SentinelleCoop` (ce
   depot) et `sentinellecoop` (`C:\Users\ulric\Documents\cifHackathon`, dossier
   deja soumis le 23/08/2026 pour l'edition Burkina Faso). Ce depot est celui a
   presenter, sentinellecoop a ete abandonne car devenu trop large par rapport

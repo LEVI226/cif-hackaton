@@ -1,7 +1,7 @@
 # Modele IA de risque transactionnel
 
 Ce dossier contient une brique ML simple et explicable pour soutenir le discours
-"IA" de cifSentinel sans transformer le MVP conformite en boite noire.
+"IA" de SentinelleCoop sans transformer le MVP conformite en boite noire.
 
 ## Objectif
 

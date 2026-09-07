@@ -8,7 +8,7 @@ ou expliquer le projet sans dependance a une session IA.
 Prompt utilisateur resume :
 
 ```text
-cifSentinel est calque sur le TDR et sera notre travail a presenter demain.
+SentinelleCoop est calque sur le TDR et sera notre travail a presenter demain.
 Il doit respecter tout ce que le TDR veut, car on doit remporter le hackathon.
 SentinelleCoop etait devenu trop gros et s'eloignait du TDR.
 Quel est le probleme qu'on resout ?
@@ -16,7 +16,7 @@ Quel est le probleme qu'on resout ?
 
 Decision :
 
-- cifSentinel devient la piste principale.
+- SentinelleCoop devient la piste principale.
 - SentinelleCoop reste une reference, mais ne pilote plus le scope.
 - Le scope prioritaire est la Thematique 01 : filtrage clients LBC/FT/FP.
 
@@ -38,7 +38,7 @@ Actions reprises :
 ## Prompt de maintenance a reutiliser
 
 ```text
-Avant de modifier cifSentinel, lis CHANGELOG.md, docs/MAINTENANCE.md et les tests
+Avant de modifier SentinelleCoop, lis CHANGELOG.md, docs/MAINTENANCE.md et les tests
 concernes. Fais une modification courte, rattachee explicitement au TDR CIF
 Thematique 01. Ajoute ou adapte un test. Mets a jour CHANGELOG.md et, si la
 decision vient d'un prompt important, docs/PROMPTS.md.
@@ -93,12 +93,12 @@ sur la vraie liste ONU, et un dossier de candidature deja depose le 23/08/2026
 pour l'edition Burkina Faso (4-6 sept 2026). L'utilisateur a clarifie :
 
 ```text
-cifSentinel est calque sur le TDR et sera notre travail a presenter demain [...]
+SentinelleCoop est calque sur le TDR et sera notre travail a presenter demain [...]
 SentinelleCoop etait devenu trop gros avec beaucoup de tentatives ca et la, et
 on s'eloignait du TDR.
 ```
 
-Decision : cifSentinel (ce depot) est le projet a presenter. sentinellecoop
+Decision : SentinelleCoop (ce depot) est le projet a presenter. sentinellecoop
 reste une reference technique interessante (son moteur phonetique WAPE est
 nettement plus rigoureux que le RapidFuzz generique utilise ici - une
 integration future serait pertinente si le temps le permet) mais ne pilote plus

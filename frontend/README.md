@@ -1,6 +1,6 @@
-# Sentinel frontend
+# SentinelleCoop — frontend
 
-PWA React/Vite pour la demonstration terrain de cifSentinel. Elle consomme l'API
+PWA React/Vite pour la demonstration terrain de SentinelleCoop. Elle consomme l'API
 FastAPI situee dans `../backend`.
 
 ## Prerequis

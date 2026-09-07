@@ -1,6 +1,6 @@
-# cifSentinel
+# SentinelleCoop
 
-cifSentinel est une solution de demonstration pour la Thematique 01 du Hackathon
+SentinelleCoop est une solution de demonstration pour la Thematique 01 du Hackathon
 CIF DigiCoop-WA+ 2026 : filtrage des clients LBC/FT/FP pour les cooperatives
 financieres et institutions de microfinance.
 
@@ -10,7 +10,7 @@ Les caisses doivent identifier rapidement les clients et operations a risque
 sanctions, PPE, blanchiment, financement du terrorisme ou proliferation, avec des
 moyens informatiques limites et parfois une connectivite instable.
 
-cifSentinel transforme ce controle en flux operationnel simple :
+SentinelleCoop transforme ce controle en flux operationnel simple :
 
 - profiler le client et ses comptes ;
 - filtrer clients et transactions en temps reel ;

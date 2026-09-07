@@ -1,4 +1,4 @@
-# Sentinel backend
+# SentinelleCoop — backend
 
 API de filtrage LBC/FT/PPE pour les SFD membres du reseau CIF, Hackathon CIF
 DigiCoop-WA+ 2026, Thematique 01.

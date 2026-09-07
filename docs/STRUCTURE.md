@@ -78,7 +78,7 @@ Ces elements ne sont pas necessaires dans une livraison propre :
 - logs `*.log`
 
 `graphify-out/` est un artefact d'analyse du code. Il peut etre garde localement,
-mais il n'est pas requis pour presenter cifSentinel.
+mais il n'est pas requis pour presenter SentinelleCoop.
 
 ## Regle d'organisation
 

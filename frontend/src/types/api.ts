@@ -141,6 +141,7 @@ export type AlertStatus = "OUVERTE" | "EN_COURS" | "LEVEE" | "CONFIRMEE";
 export interface AlertOut {
   id: number;
   statut: AlertStatus;
+  decision: ScreeningDecision;
   score: number;
   matched_on: string | null;
   client_fid: string | null;
@@ -229,6 +230,11 @@ export interface AccountOut {
   solde: number;
 }
 
+export interface SeriePoint {
+  date: string;
+  total: number;
+}
+
 export interface DashboardStats {
   vue: "RESEAU" | "LOCALE";
   sfd_nom?: string | null;
@@ -246,6 +252,19 @@ export interface DashboardStats {
   clients_ppe: number;
   clients_risque_eleve: number;
 
+  total_transactions: number;
+  transactions_bloquees: number;
+  volume_transactions: number;
+
   sanctions_listees: number;
   ppe_listees: number;
+
+  serie_clients: SeriePoint[];
+  serie_screenings: SeriePoint[];
+  serie_alertes: SeriePoint[];
+
+  score_conformite: number;
+  taux_traitement_alertes: number;
+  taux_kyc_valide: number;
+  taux_couverture_screening: number;
 }

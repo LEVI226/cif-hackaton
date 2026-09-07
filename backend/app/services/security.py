@@ -21,7 +21,11 @@ from pydantic import BaseModel
 # La valeur par defaut n'existe que pour que la demo et les tests tournent sans config.
 JWT_SECRET = os.environ.get("SENTINEL_JWT_SECRET", "dev-only-secret-change-me")
 JWT_ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+# 30 min par defaut. Reglable par variable d'environnement : le jour de la
+# demonstration, une session qui expire en pleine presentation coute cher, mais
+# allonger la duree en dur affaiblirait le defaut pour tout le monde. Exemple :
+#   $env:SENTINEL_TOKEN_TTL_MINUTES = "480"   (8 h, poste de demonstration)
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("SENTINEL_TOKEN_TTL_MINUTES", "30"))
 
 _hasher = PasswordHasher()
 _bearer_scheme = HTTPBearer(auto_error=True)

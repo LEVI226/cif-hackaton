@@ -15,14 +15,44 @@ interface AuthContextValue extends AuthState {
 
 const STORAGE_KEY = "sentinel_auth";
 
+const EMPTY_STATE: AuthState = { token: null, role: null, sfdId: null };
+
+/** Lit la date d'expiration inscrite dans le jeton JWT (champ `exp`), sans
+ * librairie : le payload est la 2e section, encodee en base64url. */
+function tokenExpired(token: string): boolean {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return true;
+    const decoded = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    if (typeof decoded.exp !== "number") return false; // pas de date : on laisse le serveur trancher
+    return decoded.exp * 1000 <= Date.now();
+  } catch {
+    return true; // jeton illisible = inutilisable
+  }
+}
+
+/** Une session dont le jeton a expire ne doit PAS etre restauree : sinon
+ * l'interface s'affiche comme connectee (le jeton existe toujours en
+ * localStorage) pendant que chaque appel API repond 401, et l'utilisateur voit
+ * une application vide sans comprendre pourquoi. */
 function loadInitialState(): AuthState {
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return { token: null, role: null, sfdId: null };
+  if (!raw) return EMPTY_STATE;
   try {
-    return JSON.parse(raw) as AuthState;
+    const parsed = JSON.parse(raw) as AuthState;
+    if (!parsed.token || tokenExpired(parsed.token)) {
+      clearStoredSession();
+      return EMPTY_STATE;
+    }
+    return parsed;
   } catch {
-    return { token: null, role: null, sfdId: null };
+    return EMPTY_STATE;
   }
+}
+
+export function clearStoredSession(): void {
+  localStorage.removeItem("sentinel_token");
+  localStorage.removeItem(STORAGE_KEY);
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -46,9 +76,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
-    localStorage.removeItem("sentinel_token");
-    localStorage.removeItem(STORAGE_KEY);
-    setState({ token: null, role: null, sfdId: null });
+    clearStoredSession();
+    setState(EMPTY_STATE);
   };
 
   const value = useMemo(() => ({ ...state, login, logout }), [state]);

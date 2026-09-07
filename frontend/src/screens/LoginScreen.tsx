@@ -10,6 +10,8 @@ export function LoginScreen() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  // Pose par lib/api.ts quand un appel a ete rejete en 401 (jeton expire).
+  const sessionExpiree = new URLSearchParams(window.location.search).has("expired");
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -17,7 +19,9 @@ export function LoginScreen() {
     setSubmitting(true);
     try {
       await login(username, password);
-      navigate("/clients");
+      // Vers le tableau de bord, pas /clients : ADMIN_RESEAU n'a pas acces aux
+      // donnees client (separation des taches) et atterrissait sur un 403.
+      navigate("/");
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         setError("Identifiants incorrects.");
@@ -38,6 +42,11 @@ export function LoginScreen() {
         <p className="muted">Filtrage LBC/FT/PPE — reseau CIF</p>
       </div>
       <form className="card stack" onSubmit={onSubmit}>
+        {sessionExpiree && (
+          <div className="pill amber" style={{ alignSelf: "flex-start" }}>
+            Session expiree — merci de vous reconnecter
+          </div>
+        )}
         <div className="field">
           <label htmlFor="username">Identifiant</label>
           <input

@@ -2,7 +2,20 @@
 // du header d'authentification. Voir lib/queue.ts pour la couche hors-ligne qui
 // appelle ces memes fonctions au moment de la synchronisation.
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
+/** Par defaut, l'API est cherchee sur le MEME hote que la page, port 8000.
+ * Consequence pratique : la meme build fonctionne sur `localhost:5173` comme
+ * depuis un telephone sur `http://<ip-du-poste>:5173`, sans rien reconfigurer
+ * quand l'adresse IP de la machine change (changement de wifi, partage de
+ * connexion...) - un piege qui nous a deja coute une session de test.
+ * `VITE_API_BASE_URL` reste prioritaire si on veut viser un backend distant. */
+function defaultApiBase(): string {
+  if (typeof window !== "undefined" && window.location.hostname) {
+    return `${window.location.protocol}//${window.location.hostname}:8000`;
+  }
+  return "http://127.0.0.1:8000";
+}
+
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || defaultApiBase();
 
 export class ApiError extends Error {
   status: number;
@@ -58,9 +71,23 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
 
   const data = await response.json().catch(() => null);
   if (!response.ok) {
+    if (response.status === 401) handleExpiredSession(path);
     throw new ApiError(response.status, data?.detail ?? data ?? response.statusText);
   }
   return data as T;
+}
+
+/** Le jeton peut expirer pendant l'utilisation (30 min cote serveur). Dans ce
+ * cas on purge la session et on renvoie a l'ecran de connexion, plutot que de
+ * laisser une interface "connectee" dont tous les appels echouent en silence. */
+function handleExpiredSession(path: string): void {
+  if (path.startsWith("/auth/login")) return; // ici, 401 = mauvais identifiants
+  if (!getToken()) return; // deja deconnecte, rien a purger
+  localStorage.removeItem("sentinel_token");
+  localStorage.removeItem("sentinel_auth");
+  if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+    window.location.assign("/login?expired=1");
+  }
 }
 
 /** true si la derniere tentative a echoue pour une raison reseau (pas une erreur

@@ -5,9 +5,25 @@ import { cachedGet } from "../lib/cache";
 import { submitOrQueue } from "../lib/queue";
 import { useAuth } from "../lib/auth";
 import { CacheBadge } from "../components/CacheBadge";
+import { IconSearch } from "../components/icons";
 import type { ClientCreate, ClientOut } from "../types/api";
 
 const CAN_CREATE_CLIENT = ["AGENT_GUICHET", "SUPERVISEUR_SFD"];
+// Miroir d'affichage de app.services.security.LOCAL_ROLES - sert uniquement a
+// expliquer la regle de visibilite a l'ecran ; le filtrage reel est cote serveur.
+const LOCAL_ROLES = ["AGENT_GUICHET", "AGENT_CONFORMITE", "SUPERVISEUR_SFD"];
+
+const RISK_LABEL: Record<ClientOut["niveau_risque_initial"], string> = {
+  FAIBLE: "Risque faible",
+  MOYEN: "Risque moyen",
+  ELEVE: "Risque eleve",
+};
+
+const RISK_TONE: Record<ClientOut["niveau_risque_initial"], string> = {
+  FAIBLE: "teal",
+  MOYEN: "amber",
+  ELEVE: "red",
+};
 
 export function ClientSearchScreen() {
   const { role } = useAuth();
@@ -47,8 +63,8 @@ export function ClientSearchScreen() {
 
   return (
     <div className="stack">
-      <div className="row" style={{ justifyContent: "space-between" }}>
-        <h1>Clients</h1>
+      {/* Pas de titre ici : la barre du haut porte deja "Clients". */}
+      <div className="row" style={{ justifyContent: "flex-end" }}>
         {role && CAN_CREATE_CLIENT.includes(role) && (
           <button className="btn" onClick={() => setShowCreate((v) => !v)}>
             {showCreate ? "Fermer" : "Nouveau client"}
@@ -78,14 +94,31 @@ export function ClientSearchScreen() {
         </div>
       )}
 
+      {/* Etat initial : plutot qu'une page vide, on rappelle ce que la recherche
+          accepte et quelle regle de visibilite s'applique au role connecte -
+          c'est aussi ce que le jury doit comprendre en regardant l'ecran. */}
+      {!results && !searchError && (
+        <div className="card stack tight" style={{ textAlign: "center", padding: "30px 22px" }}>
+          <div className="stat-icon" style={{ margin: "0 auto", width: 34, height: 34 }}>
+            <IconSearch size={18} />
+          </div>
+          <strong>Rechercher un client du reseau</strong>
+          <span className="muted" style={{ maxWidth: 460, margin: "0 auto" }}>
+            Par nom, prenom ou identifiant FID. {role && LOCAL_ROLES.includes(role)
+              ? "Votre role est rattache a une caisse : vous voyez le detail complet des clients de votre SFD, et seulement l'existence des comptes ouverts ailleurs."
+              : "Votre role est transverse : les noms restent masques tant qu'aucune alerte n'est ouverte ou confirmee sur le client."}
+          </span>
+        </div>
+      )}
+
       {results && (
         <div className="tblwrap">
           <table>
             <thead>
               <tr>
-                <th>FID</th>
-                <th>Nom</th>
-                <th>Prenom</th>
+                <th>Client</th>
+                <th>Profil de risque</th>
+                <th>Type</th>
                 <th></th>
               </tr>
             </thead>
@@ -93,17 +126,40 @@ export function ClientSearchScreen() {
               {results.map((c) => (
                 <tr key={c.fid}>
                   <td>
-                    <code>{c.fid}</code>
+                    <div className="row" style={{ gap: 10, flexWrap: "nowrap" }}>
+                      <span className={`avatar${c.nom_masque ? " amber" : ""}`}>
+                        {`${c.prenom?.[0] ?? ""}${c.nom?.[0] ?? ""}`.toUpperCase() || "?"}
+                      </span>
+                      <span style={{ minWidth: 0 }}>
+                        <div style={{ fontWeight: 600 }}>
+                          {c.nom} {c.prenom}
+                          {c.nom_masque && (
+                            <span
+                              className="pill amber"
+                              style={{ marginLeft: 8 }}
+                              title="Identite masquee : votre role voit le signal, pas le nom complet, tant qu'aucune alerte n'est confirmee sur ce client"
+                            >
+                              masque
+                            </span>
+                          )}
+                        </div>
+                        <div className="muted mono">{c.fid}</div>
+                      </span>
+                    </div>
                   </td>
                   <td>
-                    {c.nom}
-                    {c.nom_masque && (
-                      <span className="pill amber" style={{ marginLeft: 8 }} title="Nom masque - visible integralement seulement en cas d'alerte confirmee">
-                        masque
+                    <div className="row" style={{ gap: 6 }}>
+                      <span className={`pill ${RISK_TONE[c.niveau_risque_initial]}`}>
+                        {RISK_LABEL[c.niveau_risque_initial]}
                       </span>
-                    )}
+                      {c.est_ppe && (
+                        <span className="pill violet" title="Personne politiquement exposee">
+                          PPE
+                        </span>
+                      )}
+                    </div>
                   </td>
-                  <td>{c.prenom}</td>
+                  <td className="muted">{c.type_client === "MORALE" ? "Personne morale" : "Personne physique"}</td>
                   <td>
                     <Link to={`/clients/${c.fid}`}>Voir la fiche →</Link>
                   </td>

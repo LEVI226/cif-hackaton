@@ -57,6 +57,7 @@ def list_alerts(
         AlertOut(
             id=a.id,
             statut=a.statut,
+            decision=a.screening_result.decision,
             score=a.screening_result.score,
             matched_on=a.screening_result.matched_on,
             client_fid=a.screening_result.client_fid,
@@ -87,6 +88,7 @@ def resolve_alert(
     return AlertOut(
         id=alert.id,
         statut=alert.statut,
+        decision=alert.screening_result.decision,
         score=alert.screening_result.score,
         matched_on=alert.screening_result.matched_on,
         client_fid=alert.screening_result.client_fid,

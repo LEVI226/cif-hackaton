@@ -4,6 +4,92 @@ Tous les changements notables de cifSentinel sont consignes ici pour que l'equip
 puisse maintenir le projet sans dependre d'une memoire IA. Voir aussi
 `docs/PROMPTS.md` pour le "pourquoi" derriere les choix ci-dessous.
 
+## 2026-09-07 (soir) - Session expiree : l'interface restait affichee a vide
+
+Signale par l'equipe : le tableau de bord affichait "Le chargement des
+statistiques a echoue" alors que l'utilisateur semblait connecte. Diagnostic :
+le jeton JWT expire au bout de 30 min cote serveur, mais `ProtectedRoute` ne
+verifiait que la PRESENCE d'un jeton en localStorage, jamais sa validite.
+Resultat : coquille applicative affichee avec le bon role, et tous les appels
+API rejetes en 401 - sans aucun message expliquant qu'il faut se reconnecter.
+Defaut anterieur a la refonte visuelle, mais fatal en demonstration.
+
+### Corrige
+
+- `lib/auth.tsx` : la date d'expiration (`exp`) est lue dans le jeton au
+  demarrage. Une session expiree n'est plus restauree du tout - on repart sur
+  l'ecran de connexion au lieu d'afficher une interface morte.
+- `lib/api.ts` : tout 401 recu en cours d'usage purge la session et renvoie sur
+  `/login?expired=1`. Le cas `POST /auth/login` est exclu (la, un 401 signifie
+  "mauvais identifiants", pas "session expiree") pour eviter une boucle.
+- `LoginScreen` affiche "Session expiree — merci de vous reconnecter".
+- `ACCESS_TOKEN_EXPIRE_MINUTES` devient reglable par
+  `SENTINEL_TOKEN_TTL_MINUTES` (defaut inchange : 30 min). Le poste de
+  demonstration peut monter a 480 sans affaiblir le defaut du projet.
+
+### Verifie (Playwright)
+
+- Jeton deja expire au chargement -> redirection `/login`, localStorage purge.
+- Jeton devenant invalide en cours de session -> le premier appel rejete
+  renvoie sur `/login?expired=1` avec le message affiche.
+- 73 tests backend toujours au vert.
+
+## 2026-09-07 (soir) - Refonte visuelle, sans toucher au RBAC
+
+L'equipe a compare notre interface a celle d'une autre piste (SentinelleCoop,
+Next.js/shadcn) et a demande le meme niveau de finition. Parti pris : reprendre
+sa **structure** (barre laterale, densite, sparklines, jauge) mais rien de sa
+logique - cette piste-la n'a aucune authentification ni RBAC cable (`next-auth`
+present dans package.json, jamais configure ; `db.client.findMany()` sans aucun
+filtre de role), c'est-a-dire precisement ce que le jury a demande de traiter.
+
+### Ajoute
+
+- Systeme de design refondu (`index.css`) : palette emeraude/ardoise, echelle
+  typographique, ombres, et les effets demandes par l'equipe (degrade sur le
+  titre, halo pulsant sur les alertes critiques, reflet et elevation au survol,
+  squelettes scintillants). `prefers-reduced-motion` neutralise le tout.
+- **Barre laterale sombre** (module + sous-titre + pastille d'alertes ouvertes)
+  qui devient une **barre d'onglets basse en dessous de 900 px** : la PWA est
+  utilisee au guichet sur telephone, une laterale fixe de 248 px y serait un
+  contresens. Position verifiee en 390x844 (collee au bas de la fenetre).
+- `components/icons.tsx` et `components/charts.tsx` : icones, sparklines et
+  jauge **dessinees a la main en SVG**. Aucune dependance ajoutee (ni lucide,
+  ni recharts) - la PWA doit rester legere et autonome hors-ligne.
+- Aucune police distante : une police servie par CDN tomberait en fallback
+  silencieux hors-ligne, dans le cas d'usage meme que le TDR nous demande.
+- Tableau de bord : bandeau d'entete, six tuiles KPI avec tendance 7 jours,
+  jauge de score et trois barres d'indicateurs.
+- Ecran clients : lignes avec initiales, badge de risque, badge PPE, et surtout
+  le badge **"masque"** bien plus visible - c'est la preuve a l'ecran de la
+  visibilite differenciee. Etat initial explicatif au lieu d'une page vide.
+- File d'alertes : lisere de gravite, pastille bloquante/informative, score en
+  pourcentage, etat vide soigne.
+
+### Corrige
+
+- `POST /auth/login` renvoyait toujours vers `/clients` : un ADMIN_RESEAU
+  atterrissait donc sur un ecran "role non autorise" a chaque connexion. Il
+  arrive maintenant sur le tableau de bord, accessible a tous les roles.
+- `API_BASE_URL` se deduit desormais de l'hote qui sert la page au lieu d'une IP
+  figee dans `.env.local`. L'adresse IP du poste avait change entre deux
+  sessions et l'application ne joignait plus son backend - le meme piege se
+  serait produit le jour de la demo en changeant de wifi.
+- `AlertOut` expose maintenant `decision` (BLOQUANT/INFORMATIF) : l'interface
+  affiche la gravite renvoyee par le serveur au lieu de recopier les seuils
+  0,92 / 0,75, qui restent a un seul endroit (`services/fuzzy_match.py`).
+
+### Le RBAC n'a pas bouge - verifie, pas suppose
+
+- 73 tests backend passent, dont les 13 de `test_visibility.py`.
+- Verification a l'ecran (Playwright, donnees reelles du corpus) :
+  - `guichet_dori` (role local) voit 3 clients / 3 comptes ; `conformite_reseau`
+    en voit 8 / 9 sur le meme tableau de bord.
+  - Un role reseau cherchant un client **avec** alerte vive voit son nom en
+    clair ; le meme role cherchant NIKIEMA ALI (aucune alerte) obtient
+    `N. A.` + badge "masque", et la chaine "NIKIEMA" est absente du DOM.
+  - Le menu "Alertes" reste invisible pour AGENT_GUICHET.
+
 ## 2026-09-07 (tard) - Tableau de bord reel + detection reseau fiable (health-check)
 
 Deux trous identifies lors d'une relecture critique d'un prompt de refonte

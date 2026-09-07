@@ -1,7 +1,7 @@
-import { useOnlineStatus, usePendingOpsCount, useFailedOpsCount } from "../hooks/useOnlineStatus";
+import { useConnectionStatus, usePendingOpsCount, useFailedOpsCount } from "../hooks/useOnlineStatus";
 
 export function SyncIndicator() {
-  const online = useOnlineStatus();
+  const status = useConnectionStatus();
   const pending = usePendingOpsCount();
   const failed = useFailedOpsCount();
 
@@ -12,10 +12,17 @@ export function SyncIndicator() {
       </span>
     );
   }
-  if (!online) {
+  if (status === "OFFLINE") {
     return (
       <span className="pill amber" title="Hors-ligne - les ecritures sont mises en file">
         Hors-ligne{pending > 0 ? ` - ${pending} en attente` : ""}
+      </span>
+    );
+  }
+  if (status === "DEGRADED") {
+    return (
+      <span className="pill amber" title="Reseau present mais serveur injoignable - les ecritures sont mises en file">
+        Serveur injoignable{pending > 0 ? ` - ${pending} en attente` : ""}
       </span>
     );
   }

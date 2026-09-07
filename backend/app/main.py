@@ -8,7 +8,20 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
 from app.models import *  # noqa: F401,F403 - enregistre tous les modeles sur Base.metadata
-from app.routers import accounts, admin, alerts, audit, auth, clients, mandats, ml, screening, sync, transactions
+from app.routers import (
+    accounts,
+    admin,
+    alerts,
+    audit,
+    auth,
+    clients,
+    dashboard,
+    mandats,
+    ml,
+    screening,
+    sync,
+    transactions,
+)
 
 
 @asynccontextmanager
@@ -44,6 +57,7 @@ app.include_router(mandats.router)
 app.include_router(ml.router)
 app.include_router(sync.router)
 app.include_router(admin.router)
+app.include_router(dashboard.router)
 
 
 @app.get("/health", tags=["health"])

@@ -1,7 +1,9 @@
 import { Children, useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { apiFetch, ApiError } from "../lib/api";
+import { ApiError } from "../lib/api";
+import { cachedGet } from "../lib/cache";
 import { submitOrQueue } from "../lib/queue";
+import { CacheBadge } from "../components/CacheBadge";
 import type {
   ActiviteClientOut,
   ClientOut,
@@ -17,28 +19,37 @@ export function ClientFicheScreen() {
   const [activite, setActivite] = useState<ActiviteClientOut | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fromCache, setFromCache] = useState(false);
+  const [cachedAt, setCachedAt] = useState<string | undefined>(undefined);
 
   // `reload` sert aussi de callback apres une operation reussie (depot, etc.) :
   // il ne doit PAS remplacer toute la page par "Chargement..." dans ce cas, sinon
   // le formulaire (et le message de confirmation qu'il affiche) disparait avant
   // que l'agent ait pu le lire. Le plein-page loading ne s'applique qu'au tout
   // premier chargement, tant que rien n'est encore affiche.
+  //
+  // Chaque lecture passe par cachedGet : en ligne, elle rafraichit le cache local ;
+  // hors-ligne, elle sert la derniere version connue de CETTE fiche precise si
+  // elle a deja ete ouverte une fois en ligne sur cet appareil (cf. lib/cache.ts).
   const reload = useCallback(async () => {
     if (!fid) return;
     setError(null);
     try {
-      const [clientData, soldeData, activiteData] = await Promise.all([
-        apiFetch<ClientOut>(`/clients/${fid}`),
-        apiFetch<SoldeGlobalOut>(`/clients/${fid}/solde-global`),
-        apiFetch<ActiviteClientOut>(`/clients/${fid}/mouvements`),
+      const [clientRes, soldeRes, activiteRes] = await Promise.all([
+        cachedGet<ClientOut>(`/clients/${fid}`),
+        cachedGet<SoldeGlobalOut>(`/clients/${fid}/solde-global`),
+        cachedGet<ActiviteClientOut>(`/clients/${fid}/mouvements`),
       ]);
-      setClientInfo(clientData);
-      setSolde(soldeData);
-      setActivite(activiteData);
+      setClientInfo(clientRes.data);
+      setSolde(soldeRes.data);
+      setActivite(activiteRes.data);
+      const anyFromCache = clientRes.fromCache || soldeRes.fromCache || activiteRes.fromCache;
+      setFromCache(anyFromCache);
+      setCachedAt(clientRes.cachedAt ?? soldeRes.cachedAt ?? activiteRes.cachedAt);
     } catch (err) {
       setError(
         err instanceof ApiError && err.status === 0
-          ? "Hors-ligne : la fiche client necessite une connexion."
+          ? "Hors-ligne, et cette fiche n'a jamais ete ouverte en ligne sur cet appareil - rien en cache."
           : err instanceof ApiError && err.status === 403
             ? "Ce client n'a pas de compte dans votre SFD - hors de votre perimetre."
             : "Impossible de charger la fiche.",
@@ -59,6 +70,11 @@ export function ClientFicheScreen() {
 
   return (
     <div className="stack">
+      {fromCache && (
+        <div className="row">
+          <CacheBadge cachedAt={cachedAt} />
+        </div>
+      )}
       <FicheHeader client={clientInfo} activite={activite} />
       <KycFiche client={clientInfo} />
 

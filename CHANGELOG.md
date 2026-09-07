@@ -2,7 +2,118 @@
 
 Tous les changements notables de cifSentinel sont consignes ici pour que l'equipe
 puisse maintenir le projet sans dependre d'une memoire IA. Voir aussi
-`docs/DECISIONS.md` pour le "pourquoi" derriere les choix ci-dessous.
+`docs/PROMPTS.md` pour le "pourquoi" derriere les choix ci-dessous.
+
+## 2026-09-07 (tard) - Tableau de bord reel + detection reseau fiable (health-check)
+
+Deux trous identifies lors d'une relecture critique d'un prompt de refonte
+generique recu de l'equipe (la refonte elle-meme a ete ecartee - trop risquee a
+la veille de la presentation - mais deux constats etaient reels et valables) :
+aucun ecran d'accueil avec des chiffres reels, et l'indicateur de connexion ne
+disait "en ligne" que d'apres `navigator.onLine`, qui reste `true` tant que le
+wifi repond meme si le backend est injoignable (serveur eteint, mauvaise IP,
+pare-feu).
+
+### Ajoute - Tableau de bord
+
+- `GET /dashboard/stats` (`backend/app/routers/dashboard.py`) : compteurs agreges
+  (clients, comptes, solde total, filtrages, alertes ouvertes par gravite,
+  clients PPE/risque eleve, taille des listes sanctions/PPE). Applique la meme
+  visibilite differenciee que le reste de l'API - un role local ne voit que
+  les chiffres de SA SFD (`_local_visible_client_fids`, meme regle que
+  `client_visible_to_local_role`), un role reseau voit tout le reseau. Aucun
+  nom de client n'y figure : accessible a tous les roles authentifies, y
+  compris ADMIN_RESEAU, sans contredire la separation des taches.
+- `frontend/src/screens/DashboardScreen.tsx`, route `/` (nouvelle page
+  d'accueil pour tous les roles, y compris ADMIN_RESEAU - avant, `/`
+  redirigeait directement vers `/clients` ou `/admin` sans jamais rien
+  afficher). Utilise `cachedGet` comme le reste de l'app.
+- Nouvelles classes `.stat-grid`/`.stat-tile` dans `index.css`.
+
+### Ajoute - Detection reseau reelle (3 etats)
+
+- `frontend/src/lib/health.ts` (`pingBackendHealth`) : verifie par un vrai
+  appel `GET /health` (timeout 3s) que le backend repond, plutot que de se
+  fier au seul evenement navigateur.
+- `hooks/useOnlineStatus.ts` : nouveau `useConnectionStatus()` retourne
+  `ONLINE | DEGRADED | OFFLINE` au lieu d'un booleen. `DEGRADED` = navigateur
+  connecte mais backend injoignable - l'etat que l'ancien indicateur binaire
+  ne pouvait pas detecter. `useOnlineStatus()` est gardee (deleguant a
+  `useConnectionStatus`) pour ne pas casser les appelants existants.
+- `components/SyncIndicator.tsx` affiche desormais trois pastilles distinctes :
+  "Synchronise" / "Serveur injoignable" / "Hors-ligne".
+- `lib/queue.ts` (`startQueueAutoSync`) : l'evenement navigateur `online` seul
+  ne se redeclenche jamais si le wifi n'a jamais bouge pendant que le backend
+  redemarrait (transition DEGRADED -> ONLINE) - la file d'ecritures restait
+  bloquee jusqu'a une action manuelle. Un sondage `/health` toutes les 8s
+  (seulement s'il y a des operations en attente) declenche desormais
+  `flushQueue()` des que le backend redevient joignable, meme sans evenement
+  `online`.
+
+### Verifie en conditions reelles (backend + Playwright, pas juste relecture)
+
+- `POST /auth/login` + `GET /dashboard/stats` sur les donnees reelles du
+  corpus (`sentinel.db` seede) : `guichet_dori` voit 3 clients/3 comptes/2 145
+  000 FCFA (perimetre Dori uniquement) ; `conformite_reseau` et
+  `auditeur_reseau` voient les 8 clients/9 comptes/6 980 000 FCFA du reseau
+  entier - la difference confirme que le filtrage par SFD fonctionne, pas
+  seulement que l'endpoint repond.
+- Simulation DEGRADED (requetes `/health` bloquees via `page.route`, sans
+  couper le reseau navigateur) : la pastille passe a "Serveur injoignable"
+  dans les 8s, confirmee par capture d'ecran.
+- Simulation OFFLINE (`context.set_offline(true)`) : pastille "Hors-ligne",
+  puis retour a "Synchronise" une fois la connexion retablie.
+
+## 2026-09-07 (nuit) - Lecture hors-ligne : combler le seul vrai trou trouve en testant
+
+En verifiant en direct (coupure reseau reelle, pas juste relecture de code) le
+mode degrade demande par le TDR, un ecart honnete est apparu : la file
+`lib/queue.ts` couvre les ECRITURES hors-ligne, mais aucune LECTURE (recherche,
+fiche client, solde global) n'etait mise en cache - une coupure reseau pendant
+une consultation produisait un ecran d'erreur.
+
+### Ajoute
+
+- `frontend/src/lib/cache.ts` (`cachedGet`) : toute lecture reussie en ligne est
+  memorisee dans IndexedDB (nouvelle table `cachedReads`, `db.ts` v2). Si le
+  meme appel echoue plus tard pour une raison reseau, la derniere reponse
+  connue est servie a la place d'une erreur - jamais pour masquer une vraie
+  erreur 403/404, seulement un echec reseau.
+- Badge "Hors-ligne — cache de HH:MM" (`components/CacheBadge.tsx`) affiche sur
+  l'ecran de recherche et la fiche client des que les donnees affichees
+  viennent du cache plutot que du serveur.
+- `ClientSearchScreen.tsx` et `ClientFicheScreen.tsx` utilisent maintenant
+  `cachedGet` au lieu d'`apiFetch` direct pour leurs lectures.
+
+### Verifie en conditions reelles (Playwright, coupure reseau simulee)
+
+- Recherche "KABORE" en ligne, puis hors-ligne : memes resultats, badge cache
+  affiche.
+- Fiche client (KABORE AMADOU, comptes Dori+Banfora) ouverte en ligne, puis
+  revisitee hors-ligne via navigation interne (pas un rechargement de page -
+  voir note ci-dessous) : solde global 1 405 000 FCFA toujours affiche.
+- Recherche d'un terme JAMAIS vu en ligne, hors-ligne : message d'erreur
+  honnete ("rien en cache pour ce terme"), pas un ecran vide trompeur.
+
+### Limite du mode developpement (non presente en production - verifie)
+
+Un **rechargement complet de page** (F5, ou `page.reload()`) hors-ligne echoue
+avant meme que le code de l'app ne s'execute en mode developpement
+(`bun run dev`) : pas de service worker actif pour servir l'app shell
+hors-ligne (le plugin PWA ne le genere qu'au `build` de production).
+
+**Verifie separement sur le vrai build de production** (`bun run build` puis
+`bun run preview`, service worker actif et confirme) : un F5 complet hors-ligne
+fonctionne - app shell servi par le service worker, session conservee
+(`localStorage`), fiche client rechargee depuis le cache `cachedReads`. La
+limite n'existe qu'en dev ; le build qui sera reellement demontre demain n'est
+pas concerne. A garder en tete si un membre de l'equipe teste sur
+`bun run dev` la veille et croit voir un bug.
+
+### Tests
+
+- 73 tests backend inchanges (ce correctif est cote frontend uniquement).
+- `frontend`: `bun run build` sans erreur TypeScript.
 
 ## 2026-09-07 (soir) - Visibilite differenciee reelle, fiche KYC, jeu de donnees corpus
 

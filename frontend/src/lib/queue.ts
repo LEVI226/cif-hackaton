@@ -10,6 +10,7 @@
 
 import { apiFetch, isNetworkError } from "./api";
 import { db, type PendingOp, type PendingOpKind } from "./db";
+import { pingBackendHealth } from "./health";
 
 function generateOpId(): string {
   if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID();
@@ -72,11 +73,36 @@ export async function flushQueue(): Promise<void> {
   }
 }
 
+const HEALTH_RECOVERY_POLL_MS = 8000;
+
+/** L'evenement navigateur 'online' ne se declenche que si le wifi/la carte
+ * reseau change d'etat - il ne dit rien du backend. Si le backend redemarre
+ * pendant que le wifi n'a jamais bouge (le cas DEGRADED -> ONLINE de
+ * lib/health.ts), 'online' ne se re-declenche jamais et la file resterait
+ * bloquee jusqu'a la prochaine action manuelle. On sonde donc aussi /health
+ * pendant qu'il y a des operations en attente, et on relance des que le
+ * backend redevient joignable. */
 export function startQueueAutoSync(): () => void {
   const onOnline = () => void flushQueue();
   window.addEventListener("online", onOnline);
   if (navigator.onLine) void flushQueue();
-  return () => window.removeEventListener("online", onOnline);
+
+  let lastReachable = true;
+  const interval = setInterval(() => {
+    void (async () => {
+      if (!navigator.onLine) return;
+      const pendingCount = await db.pendingOps.where("status").equals("PENDING").count();
+      if (pendingCount === 0) return;
+      const reachable = await pingBackendHealth();
+      if (reachable && !lastReachable) void flushQueue();
+      lastReachable = reachable;
+    })();
+  }, HEALTH_RECOVERY_POLL_MS);
+
+  return () => {
+    window.removeEventListener("online", onOnline);
+    clearInterval(interval);
+  };
 }
 
 export async function retryFailedOp(op: PendingOp): Promise<void> {

@@ -228,3 +228,24 @@ export interface AccountOut {
   date_ouverture: string;
   solde: number;
 }
+
+export interface DashboardStats {
+  vue: "RESEAU" | "LOCALE";
+  sfd_nom?: string | null;
+
+  total_clients: number;
+  total_comptes: number;
+  solde_total: number;
+
+  total_screenings: number;
+  alertes_ouvertes: number;
+  alertes_bloquantes_ouvertes: number;
+  alertes_informatives_ouvertes: number;
+  dernier_screening_at?: string | null;
+
+  clients_ppe: number;
+  clients_risque_eleve: number;
+
+  sanctions_listees: number;
+  ppe_listees: number;
+}

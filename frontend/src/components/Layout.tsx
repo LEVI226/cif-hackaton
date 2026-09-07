@@ -2,7 +2,17 @@ import { NavLink, Outlet } from "react-router-dom";
 import { roleLabel, useAuth } from "../lib/auth";
 import { SyncIndicator } from "./SyncIndicator";
 
+const ALL_ROLES = [
+  "AGENT_GUICHET",
+  "AGENT_CONFORMITE",
+  "SUPERVISEUR_SFD",
+  "CONFORMITE_RESEAU",
+  "AUDITEUR",
+  "ADMIN_RESEAU",
+];
+
 const NAV_ITEMS: { to: string; label: string; roles: string[] }[] = [
+  { to: "/", label: "Tableau de bord", roles: ALL_ROLES },
   {
     to: "/clients",
     label: "Clients",

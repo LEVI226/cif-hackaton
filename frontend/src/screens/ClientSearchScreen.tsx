@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { apiFetch, ApiError } from "../lib/api";
+import { ApiError } from "../lib/api";
+import { cachedGet } from "../lib/cache";
 import { submitOrQueue } from "../lib/queue";
 import { useAuth } from "../lib/auth";
+import { CacheBadge } from "../components/CacheBadge";
 import type { ClientCreate, ClientOut } from "../types/api";
 
 const CAN_CREATE_CLIENT = ["AGENT_GUICHET", "SUPERVISEUR_SFD"];
@@ -11,6 +13,8 @@ export function ClientSearchScreen() {
   const { role } = useAuth();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ClientOut[] | null>(null);
+  const [fromCache, setFromCache] = useState(false);
+  const [cachedAt, setCachedAt] = useState<string | undefined>(undefined);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
 
@@ -21,11 +25,18 @@ export function ClientSearchScreen() {
     setSearching(true);
     setSearchError(null);
     try {
-      const data = await apiFetch<ClientOut[]>("/clients/search", { query: { q: query } });
+      const { data, fromCache: cached, cachedAt: at } = await cachedGet<ClientOut[]>(
+        "/clients/search",
+        { q: query },
+      );
       setResults(data);
+      setFromCache(cached);
+      setCachedAt(at);
     } catch (err) {
       if (err instanceof ApiError && err.status === 0) {
-        setSearchError("Hors-ligne : la recherche necessite une connexion (les listes ne sont pas mises en cache localement pour l'instant).");
+        setSearchError(
+          "Hors-ligne, et cette recherche n'a jamais ete faite en ligne sur cet appareil - rien en cache pour ce terme.",
+        );
       } else {
         setSearchError("La recherche a echoue.");
       }
@@ -60,6 +71,12 @@ export function ClientSearchScreen() {
       </form>
 
       {searchError && <div className="error-banner">{searchError}</div>}
+
+      {results && fromCache && (
+        <div className="row">
+          <CacheBadge cachedAt={cachedAt} />
+        </div>
+      )}
 
       {results && (
         <div className="tblwrap">

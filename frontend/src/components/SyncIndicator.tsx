@@ -15,7 +15,7 @@ export function SyncIndicator() {
   if (!online) {
     return (
       <span className="pill amber" title="Hors-ligne - les ecritures sont mises en file">
-        Hors-ligne{pending > 0 ? ` · ${pending} en attente` : ""}
+        Hors-ligne{pending > 0 ? ` - ${pending} en attente` : ""}
       </span>
     );
   }

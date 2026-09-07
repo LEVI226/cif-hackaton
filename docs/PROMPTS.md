@@ -59,3 +59,19 @@ Decision :
 - `/sync/pull` renvoie les alertes et traces recentes apres reconnexion.
 - Le discours pitch peut maintenant dire : "mode offline demonstrable pour les
   operations courantes, avec anti-doublon a la reconnexion".
+
+## 2026-09-07 - Ajouter une vraie brique IA
+
+Prompt utilisateur resume :
+
+```text
+Est-ce qu'on peut ajouter l'IA, un modele vraiment ?
+```
+
+Decision :
+
+- Ajouter un modele ML explicable et entrainable plutot qu'une IA generative vague.
+- Utiliser `scikit-learn` avec un `RandomForestClassifier`.
+- Sauvegarder le modele avec `joblib`.
+- Exposer le scoring via `POST /ml/risk-score`.
+- Documenter clairement que les donnees sont synthetiques pour la demo.

@@ -8,20 +8,20 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
 from app.models import *  # noqa: F401,F403 - enregistre tous les modeles sur Base.metadata
-from app.routers import accounts, admin, alerts, audit, auth, clients, mandats, screening, sync, transactions
+from app.routers import accounts, admin, alerts, audit, auth, clients, mandats, ml, screening, sync, transactions
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     # create_all suffit pour la demo hackathon ; un deploiement partage voudrait
-    # des migrations Alembic versionnees a la place (cf. Plan, section Dépôt).
+    # des migrations Alembic versionnees a la place (cf. Plan, section Depot).
     Base.metadata.create_all(bind=engine)
     yield
 
 
 app = FastAPI(
     title="Sentinel API",
-    description="Filtrage LBC/FT/PPE pour les SFD membres du reseau CIF — DigiCoop-WA+ 2026",
+    description="Filtrage LBC/FT/PPE pour les SFD membres du reseau CIF - DigiCoop-WA+ 2026",
     version="0.1.0",
     lifespan=lifespan,
 )
@@ -41,6 +41,7 @@ app.include_router(alerts.router)
 app.include_router(audit.router)
 app.include_router(transactions.router)
 app.include_router(mandats.router)
+app.include_router(ml.router)
 app.include_router(sync.router)
 app.include_router(admin.router)
 

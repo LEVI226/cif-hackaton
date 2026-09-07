@@ -30,7 +30,18 @@ Depuis la racine :
 .\.venv\Scripts\python.exe -m pytest backend\tests
 ```
 
-Etat valide le 2026-09-07 : 55 tests passent.
+Etat valide le 2026-09-07 : 56 tests passent.
+
+## Reentrainer le modele IA
+
+```powershell
+.\.venv\Scripts\python.exe ml\train_risk_model.py
+```
+
+Artefacts produits :
+
+- `ml/artifacts/risk_model.joblib`
+- `ml/artifacts/risk_model_metrics.json`
 
 ## Scenario de demo recommande
 
@@ -63,6 +74,7 @@ Etat valide le 2026-09-07 : 55 tests passent.
 - Filtrage sanctions/PPE : `backend/app/services/screening_service.py`
 - Matching flou : `backend/app/services/fuzzy_match.py`
 - Alertes comportementales : `backend/app/services/anomaly.py`
+- Modele IA : `ml/train_risk_model.py`, `backend/app/services/ml_risk.py`
 - Tests : `backend/tests/`
 
 ## Regle d'or

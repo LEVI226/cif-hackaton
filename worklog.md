@@ -16,13 +16,14 @@ Task: reprendre la coupure Claude et recentrer cifSentinel sur la Thematique 01 
 - Ajoute `GET /audit` pour montrer la tracabilite en demo.
 - Ajoute `POST /accounts` pour rendre la demo Swagger autonome.
 - Ajoute `/sync/push` et `/sync/pull` pour couvrir la contrainte de connectivite limitee.
+- Ajoute un modele IA transactionnel scikit-learn et l'endpoint `/ml/risk-score`.
 - Restreint les lectures locales au perimetre SFD pour les roles locaux.
 - Ajoute `CHANGELOG.md`, `docs/MAINTENANCE.md` et `docs/PROMPTS.md`.
 
 ### Verification Results:
 
 - `.\.venv\Scripts\python.exe -m pytest backend\tests`
-- 55 tests passes.
+- 56 tests passes apres ajout du modele IA.
 
 ### Next steps:
 

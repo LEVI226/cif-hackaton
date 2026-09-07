@@ -1,0 +1,54 @@
+{
+  "accuracy": 0.968,
+  "classification_report": {
+    "BLOQUANTE": {
+      "precision": 0.975,
+      "recall": 0.975,
+      "f1-score": 0.975,
+      "support": 40.0
+    },
+    "NORMAL": {
+      "precision": 0.9680851063829787,
+      "recall": 0.978494623655914,
+      "f1-score": 0.9732620320855615,
+      "support": 558.0
+    },
+    "SUSPECTE": {
+      "precision": 0.9671717171717171,
+      "recall": 0.9527363184079602,
+      "f1-score": 0.9598997493734336,
+      "support": 402.0
+    },
+    "accuracy": 0.968,
+    "macro avg": {
+      "precision": 0.9700856078515653,
+      "recall": 0.9687436473546248,
+      "f1-score": 0.9693872604863317,
+      "support": 1000.0
+    },
+    "weighted avg": {
+      "precision": 0.9679945196647325,
+      "recall": 0.968,
+      "f1-score": 0.9679599131518637,
+      "support": 1000.0
+    }
+  },
+  "features": [
+    "type_operation",
+    "montant",
+    "solde_compte",
+    "nb_ops_24h",
+    "nb_ops_30j",
+    "montant_moyen_30j",
+    "a_mandat",
+    "client_ppe",
+    "piece_expiree",
+    "score_risque_client"
+  ],
+  "classes": [
+    "BLOQUANTE",
+    "NORMAL",
+    "SUSPECTE"
+  ],
+  "dataset": "synthetique, regles inspirees du TDR CIF Thematique 01"
+}

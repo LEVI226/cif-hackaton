@@ -9,7 +9,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
-        name: "Sentinel — Filtrage LBC/FT/PPE",
+        name: "Sentinel - Filtrage LBC/FT/PPE",
         short_name: "Sentinel",
         description: "Filtrage LBC/FT/PPE pour les SFD membres du reseau CIF",
         theme_color: "#0e6b60",

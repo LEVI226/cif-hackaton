@@ -43,7 +43,7 @@ Depuis la racine :
 .\.venv\Scripts\python.exe -m pytest backend\tests
 ```
 
-Etat valide le 2026-09-07 : 55 tests passent.
+Etat valide le 2026-09-07 : 56 tests passent.
 
 ## Couverture du TDR - Thematique 01
 
@@ -56,7 +56,7 @@ Etat valide le 2026-09-07 : 55 tests passent.
 | Alertes bloquantes/informatives | `screening_service.py`, `alert.py` |
 | Solde global multi-comptes | `GET /clients/{fid}/solde-global` |
 | Client occasionnel/habituel | `GET /clients/{fid}/mouvements` |
-| Operations suspectes | `anomaly.py` |
+| Operations suspectes | `anomaly.py` + modele ML `POST /ml/risk-score` |
 | Mise a jour sanctions sans delai | `POST /admin/sanctions`, `POST /admin/ppe` |
 | Piece expiree/CNIB | `kyc.py`, applique a `POST /clients` et `POST /transactions` |
 | Retrait par procuration | `POST /mandats`, puis `POST /transactions` avec `mandataire_piece` |
@@ -74,6 +74,7 @@ Etat valide le 2026-09-07 : 55 tests passent.
 - `/transactions`
 - `/transactions/compte/{numero}`
 - `/mandats`
+- `/ml/risk-score`
 - `/screening`
 - `/alerts`
 - `/audit`

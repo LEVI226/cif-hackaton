@@ -17,6 +17,7 @@ cifSentinel transforme ce controle en flux operationnel simple :
 - generer des alertes bloquantes ou informatives ;
 - consolider le solde global multi-comptes ;
 - detecter les operations inhabituelles ;
+- scorer le risque transactionnel avec un modele ML entraine ;
 - gerer les procurations ;
 - tracer les decisions conformite ;
 - synchroniser une file d'operations apres reconnexion.
@@ -27,6 +28,7 @@ cifSentinel transforme ce controle en flux operationnel simple :
 |---|---|
 | `backend/` | API FastAPI, logique conformite, tests backend |
 | `frontend/` | PWA React/Vite qui consomme l'API backend |
+| `ml/` | Entrainement et artefacts du modele IA transactionnel |
 | `src/` | Ancienne interface Next.js/dashboard conservee comme prototype visuel |
 | `docs/` | Maintenance, structure, prompts et decisions |
 | `tests/` | Tests shell des scripts runtime historiques |
@@ -52,12 +54,13 @@ Swagger : `http://127.0.0.1:8000/docs`
 .\.venv\Scripts\python.exe -m pytest backend\tests
 ```
 
-Etat valide le 2026-09-07 : 55 tests backend passent.
+Etat valide le 2026-09-07 : 56 tests backend passent.
 
 ## Documentation utile
 
 - `backend/README.md`
 - `frontend/README.md`
+- `ml/README.md`
 - `docs/MAINTENANCE.md`
 - `docs/STRUCTURE.md`
 - `CHANGELOG.md`

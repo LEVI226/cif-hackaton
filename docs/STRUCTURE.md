@@ -28,6 +28,15 @@ PWA React/Vite orientee terrain. Elle doit consommer le backend et montrer :
 - alertes ;
 - mode offline/synchronisation.
 
+### `ml/`
+
+Pipeline IA entrainable :
+
+- `train_risk_model.py` : genere des donnees synthetiques, entraine le modele,
+  sauvegarde l'artefact.
+- `artifacts/risk_model.joblib` : modele charge par le backend.
+- `artifacts/risk_model_metrics.json` : metriques et variables utilisees.
+
 ## Prototype conserve
 
 ### `src/`

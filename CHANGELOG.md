@@ -24,6 +24,11 @@ puisse maintenir le projet sans dependre d'une memoire IA.
   - `POST /sync/push` applique une file d'operations creees hors-ligne ;
   - `GET /sync/pull` recupere alertes et traces recentes apres reconnexion ;
   - chaque operation est protegee par une cle idempotente `device_id:operation_id`.
+- Modele IA transactionnel :
+  - entrainement scikit-learn dans `ml/train_risk_model.py` ;
+  - artefact `ml/artifacts/risk_model.joblib` ;
+  - metriques `ml/artifacts/risk_model_metrics.json` ;
+  - endpoint `POST /ml/risk-score`.
 - RBAC plus proche du TDR :
   - roles locaux : guichet, conformite SFD, superviseur SFD ;
   - roles reseau : conformite reseau, auditeur, admin reseau ;
@@ -34,7 +39,7 @@ puisse maintenir le projet sans dependre d'une memoire IA.
 ### Valide
 
 - `.\.venv\Scripts\python.exe -m pytest backend\tests`
-- Resultat : 55 tests passes.
+- Resultat : 56 tests passes.
 
 ### Attention
 
